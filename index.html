@@ -1,0 +1,2164 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deako + Vivint — {Builder} (Sky X)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { 50: '#f3f5f8', 100: '#e2e7ee', 200: '#c2cad7', 300: '#95a3b9', 400: '#6c7e9a', 500: '#4f6480', 600: '#1a2740', 700: '#0e1827', 800: '#0a1220', 900: '#060a14', 950: '#030509' },
+            orange: { 50: '#eaf6fc', 100: '#cce8f6', 200: '#9cd1ec', 300: '#5cb6e0', 400: '#1493d1', 500: '#1185bd', 600: '#0e6da0', 700: '#0a557d', 800: '#073d5a', 900: '#052939' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @font-face { font-family: 'Centrano'; src: url('https://cdn.prod.website-files.com/65f45517ae0fc691f332b7a8/669fddfe0b043391f000dc36_CentraNo2-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'Centrano Book'; src: url('https://cdn.prod.website-files.com/65f45517ae0fc691f332b7a8/669fddfec3634a1288a34dc4_CentraNo2-Book.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'Centrano'; src: url('https://cdn.prod.website-files.com/65f45517ae0fc691f332b7a8/669fddfe6ebe9115784ce186_CentraNo2-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'Centrano'; src: url('https://cdn.prod.website-files.com/65f45517ae0fc691f332b7a8/669fddfe033ac9a229d8aeba_CentraNo2-Light.otf') format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
+    * { font-family: 'Centrano Book', 'Inter', sans-serif; }
+    h1, h2, h3, h4, h5, h6 { font-family: 'Centrano', 'Inter', sans-serif; font-weight: 700; }
+    .slide { display: none; min-height: 100vh; }
+    .slide.active { display: flex; }
+    .fade-in { animation: fadeIn 0.5s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .gradient-text { background: linear-gradient(135deg, #1493d1, #0e1827); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .gradient-text-gold { background: linear-gradient(135deg, #1493d1, #7bb0e7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .slide-counter { font-variant-numeric: tabular-nums; }
+    .icon-circle { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+    .icon-sm { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+    .product-img { max-height: 160px; object-fit: contain; border-radius: 8px; }
+    .product-img-lg { max-height: 200px; object-fit: contain; border-radius: 8px; }
+    .savings-highlight { background: linear-gradient(135deg, rgba(14,24,39,0.08), rgba(20,147,209,0.08)); border: 1px solid rgba(20,147,209,0.3); }
+    .cost-input { padding: 0 4px; border-radius: 3px; outline: none; cursor: text; transition: background 0.15s, box-shadow 0.15s; min-width: 38px; display: inline-block; }
+    .cost-input:hover { background: rgba(20,147,209,0.08); box-shadow: 0 0 0 1px rgba(20,147,209,0.35) inset; }
+    .cost-input:focus { background: rgba(20,147,209,0.14); box-shadow: 0 0 0 2px rgba(20,147,209,0.65) inset; }
+    .cost-current { border-left: 4px solid #1493d1; }
+    .cost-new { border-left: 4px solid #0e1827; }
+    .step-line { position: relative; }
+    .step-line::before { content: ''; position: absolute; left: 19px; top: 48px; bottom: -24px; width: 2px; background: #e5e7eb; }
+    .step-line:last-child::before { display: none; }
+    .version-badge { position: fixed; bottom: 10px; left: 12px; z-index: 60; background: rgba(0,0,0,0.35); color: rgba(255,255,255,0.45); font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 6px; cursor: pointer; letter-spacing: 0.05em; transition: opacity 0.2s; user-select: none; }
+    .version-badge:hover { opacity: 0.6; }
+    .analytics-link { position: fixed; bottom: 10px; left: 70px; z-index: 60; background: rgba(0,0,0,0.35); color: rgba(255,255,255,0.45); font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.05em; text-decoration: none; transition: opacity 0.2s; }
+    .analytics-link:hover { opacity: 0.85; color: #1493d1; }
+    /* Feedback panel — button hidden (presentation-only deck). The panel
+       and form remain wired up in the DOM in case we re-enable the button
+       in the future. */
+    .feedback-btn { display: none !important; }
+    .feedback-panel { display: none !important; }
+    .feedback-btn:hover { background: #1a2740; }
+    .feedback-panel { position: fixed; bottom: 56px; right: 8px; z-index: 60; width: 340px; max-height: 70vh; background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; display: none; flex-direction: column; gap: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
+    .feedback-panel.open { display: flex; }
+    .feedback-panel textarea { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; color: #0a1220; font-size: 14px; resize: vertical; min-height: 80px; font-family: 'Centrano Book', sans-serif; }
+    .feedback-panel textarea:focus { outline: none; border-color: #1493d1; }
+    .feedback-panel button.submit { background: linear-gradient(135deg, #0e1827, #1a2740); border: none; border-radius: 8px; padding: 10px; color: white; font-weight: 600; cursor: pointer; font-size: 14px; }
+    .feedback-panel button.submit:hover { opacity: 0.9; }
+    .feedback-list { overflow-y: auto; max-height: 40vh; display: flex; flex-direction: column; gap: 8px; }
+    .feedback-item { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; font-size: 13px; color: #374151; }
+    .feedback-item .slide-label { color: #1493d1; font-weight: 600; font-size: 12px; margin-bottom: 4px; }
+    .feedback-item .status { font-size: 11px; margin-top: 4px; }
+    .feedback-item .status.open { color: #1493d1; }
+    .feedback-item .status.fixed { color: #16a34a; }
+    .feedback-item img.feedback-screenshot { max-width: 100%; max-height: 100px; border-radius: 6px; margin-top: 6px; cursor: pointer; }
+    .drop-zone { background: #f9fafb; border: 2px dashed #e5e7eb; border-radius: 8px; padding: 12px; text-align: center; color: #9ca3af; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .drop-zone.dragover { border-color: #1493d1; background: rgba(20,147,209,0.05); color: #1493d1; }
+    .drop-zone:hover { border-color: #d1d5db; }
+    .capture-btn { background: #0e1827; color: #1493d1; border: 1px solid #1a2740; border-radius: 8px; padding: 8px; cursor: pointer; font-size: 12px; font-family: 'Centrano Book'; font-weight: 600; display: flex; align-items: center; gap: 6px; justify-content: center; flex: 1; position: relative; }
+    .capture-btn:hover { background: #1a2740; }
+    .capture-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(14,24,39,0.95); color: white; padding: 24px 36px; border-radius: 12px; font-size: 18px; font-weight: 600; font-family: 'Centrano Book'; z-index: 201; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.3); animation: fadeIn 0.3s ease; }
+    .capture-toast kbd { background: #1a2740; border: 1px solid #525252; border-radius: 4px; padding: 2px 8px; font-size: 14px; }
+    /* Edit toggle — hidden (presentation-only deck). */
+    .edit-btn { display: none !important; }
+    .edit-indicator { display: none !important; }
+    .edit-btn:hover { background: #1a2740; }
+    .edit-btn.active { background: #1493d1; color: white; border-color: #1185bd; }
+    body.edit-mode [contenteditable="true"] { outline: 2px dashed rgba(20,147,209,0.4); outline-offset: 2px; cursor: text; }
+    body.edit-mode [contenteditable="true"]:focus { outline: 2px solid #1493d1; background: rgba(20,147,209,0.05); }
+    body.edit-mode .slide img { outline: 2px dashed rgba(20,147,209,0.35); outline-offset: 2px; cursor: pointer; }
+    body.edit-mode .slide img:hover { outline: 2px solid #1493d1; }
+    .edit-indicator { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 60; background: #1493d1; color: white; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; font-family: 'Centrano Book'; display: none; }
+    body.edit-mode .edit-indicator { display: block; }
+    #imgEditPanel input[type=range] { width:100%; accent-color:#1493d1; margin-bottom:8px; }
+    .screenshot-modal { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; cursor: zoom-out; }
+    .screenshot-modal.open { display: flex; }
+    .screenshot-modal img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+    /* Mockup browser */
+    .browser-frame { background: white; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 20px 60px -15px rgba(0,0,0,0.15); }
+    .browser-bar { background: #f3f4f6; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e5e7eb; }
+    .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .browser-url { background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 4px 12px; font-size: 12px; color: #6b7280; flex: 1; margin-left: 8px; }
+  </style>
+</head>
+<body class="bg-white text-navy-900 overflow-hidden">
+
+  <!-- Navigation -->
+  <div style="position:fixed;top:16px;right:16px;z-index:50;display:flex;align-items:center;gap:8px;background:rgba(14,24,39,0.92);backdrop-filter:blur(4px);border:1px solid rgba(20,147,209,0.3);border-radius:999px;padding:6px 14px;box-shadow:0 4px 20px rgba(0,0,0,0.25);">
+    <button onclick="prevSlide()" style="background:none;border:none;cursor:pointer;color:#1493d1;display:flex;align-items:center;padding:2px;" onmouseover="this.style.color='#7bb0e7'" onmouseout="this.style.color='#1493d1'">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="slide-counter" id="slideCounter" style="color:#1493d1;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;min-width:42px;text-align:center;">1 / 12</span>
+    <button onclick="nextSlide()" style="background:none;border:none;cursor:pointer;color:#1493d1;display:flex;align-items:center;padding:2px;" onmouseover="this.style.color='#7bb0e7'" onmouseout="this.style.color='#1493d1'">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <span id="fireworksSep" style="display:none;width:1px;height:16px;background:rgba(20,147,209,0.3);flex-shrink:0;"></span>
+    <button id="fireworksBtn" onclick="launchFireworks()" title="Celebrate!" style="display:none;background:none;border:none;cursor:pointer;color:#1493d1;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;font-size:17px;padding:0;transition:background 0.15s;" onmouseover="this.style.background='rgba(20,147,209,0.25)'" onmouseout="this.style.background='none'">🎆</button>
+  </div>
+
+  <!-- Version badge -->
+  <!-- Fireworks canvas overlay -->
+  <canvas id="fireworksCanvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+
+  <div class="version-badge" onclick="this.style.display='none'" title="Click to hide">v1.0 SkyX</div>
+  <a class="analytics-link" href="analytics.html" target="_blank" rel="noopener" title="Internal analytics dashboard">analytics →</a>
+
+  <!-- Progress bar -->
+  <div class="fixed top-0 left-0 w-full h-1 bg-navy-100 z-50">
+    <div id="progressBar" class="h-full bg-gradient-to-r from-orange-400 to-navy-700 transition-all duration-500" style="width: 6%"></div>
+  </div>
+
+  <!-- ==================== SLIDE 1: OPENER ==================== -->
+  <div class="slide active" data-slide="1">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 text-center fade-in" style="background:#000;">
+      <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-12 max-w-5xl">
+        Cut Cost.<br>Simplify Operations.<br>Delight Homebuyers.
+      </h1>
+      <div class="mb-12">
+        <div style="background:white;border-radius:12px;padding:12px 24px;display:inline-flex;align-items:center;gap:16px;">
+          <img src="https://shop.deako.com/cdn/shop/files/Deako_2025_logo_500px_white.png?v=1743474883" alt="Deako" class="h-7" style="filter:invert(1);border-radius:0" onerror="this.style.display='none'">
+          <div style="width:1px;height:28px;background:#d1d5db;"></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">
+            <p style="font-size:9px;font-weight:600;color:#9ca3af;letter-spacing:0.1em;text-transform:uppercase;margin:0;line-height:1;">Certified Reseller of</p>
+            <img src="images/vivint-logo-house.svg" alt="Vivint" class="h-7" style="border-radius:0" onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>
+      <p class="text-orange-400 font-bold tracking-widest uppercase mb-6" style="font-size:0.95rem;letter-spacing:0.18em;">Why {Builder} Wins:</p>
+      <ul class="space-y-3 text-left text-lg md:text-xl text-white font-bold">
+        <li class="flex items-start gap-4"><span class="text-white" style="font-size:1.5rem;line-height:1.1;">&bull;</span><span>Save $663 per home</span></li>
+        <li class="flex items-start gap-4"><span class="text-white" style="font-size:1.5rem;line-height:1.1;">&bull;</span><span>Consolidate to 1 partner</span></li>
+        <li class="flex items-start gap-4"><span class="text-white" style="font-size:1.5rem;line-height:1.1;">&bull;</span><span>Elevate homebuyer experience</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 2: THE BOTTOM LINE ==================== -->
+  <div class="slide" data-slide="2">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 text-center fade-in">
+      <p class="text-orange-400 font-semibold text-sm tracking-widest uppercase mb-4">The Bottom Line</p>
+      <h2 class="text-3xl md:text-5xl font-bold mb-10 text-navy-700 leading-tight max-w-5xl">{Builder} improves its smart home.<br><span class="text-orange-400">At a lower cost.</span></h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full mb-10">
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm cost-current">
+          <p class="text-orange-400 font-bold text-sm tracking-widest uppercase mb-6">Today</p>
+          <div class="space-y-2.5 text-left">
+            <div class="flex justify-between text-base"><span class="text-gray-500">Ring Battery Doorbell</span><span class="text-orange-400 font-semibold cost-input" data-cost="ring" contenteditable="true" spellcheck="false">$200</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-500">Honeywell Home T6 Thermostat</span><span class="text-orange-400 font-semibold cost-input" data-cost="honeywell" contenteditable="true" spellcheck="false">$115</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-500">Kwikset Halo Lock</span><span class="text-orange-400 font-semibold cost-input" data-cost="kwikset" contenteditable="true" spellcheck="false">$150</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-500">Deako Base System*</span><span class="text-orange-400 font-semibold cost-input" data-cost="deako_base" contenteditable="true" spellcheck="false">$150</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-500">Deako 5 Pack Smart Switches</span><span class="text-orange-400 font-semibold cost-input" data-cost="deako_pack" contenteditable="true" spellcheck="false">$388</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-400 line-through">Installation</span><span class="text-gray-400 line-through">&mdash;</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-400 line-through">Security</span><span class="text-gray-400 line-through">&mdash;</span></div>
+            <div class="flex justify-between items-start text-base"><span class="text-gray-400 line-through flex flex-col leading-tight"><span>Optional Add On&rsquo;s</span><span class="text-xs">(Cameras, Smoke Detector, etc.)</span></span><span class="text-gray-400 line-through">&mdash;</span></div>
+            <hr class="border-gray-200 my-3">
+            <div class="flex justify-between text-2xl"><span class="text-navy-700 font-bold">Total</span><span class="text-orange-400 font-bold" data-cost-total>$1,003 / home</span></div>
+            <p class="text-gray-400 text-xs mt-2 italic">Click any price to edit.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-navy-200 shadow-sm cost-new">
+          <p class="text-navy-700 font-bold text-sm tracking-widest uppercase mb-6">Vivint + Deako</p>
+          <div class="space-y-2.5 text-left">
+            <div class="flex justify-between text-base"><span class="text-gray-500">Vivint Doorbell Camera + Chime</span><span class="text-green-600 font-semibold">included</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-500">Vivint Thermostat</span><span class="text-green-600 font-semibold">included</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-500">Deako Base System*</span><span class="text-green-600 font-semibold">included</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-400 line-through">Deako 5 Pack Smart Switches</span><span class="text-gray-400 line-through">&mdash;</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-500">Installation</span><span class="text-green-600 font-semibold">included</span></div>
+            <div class="flex justify-between text-base"><span class="text-gray-500">Security</span><span class="text-green-600 font-semibold">included</span></div>
+            <div class="flex justify-between items-start text-base"><span class="text-gray-500 flex flex-col leading-tight"><span>Optional Add On&rsquo;s</span><span class="text-xs text-gray-400">(Cameras, Smoke Detector, etc.)</span></span><span class="text-green-600 font-semibold">available</span></div>
+            <div class="flex justify-between items-center text-base" id="smartLockRow" data-lock-included="false">
+              <span class="smart-lock-label text-gray-400 line-through">Vivint Smart Lock</span>
+              <button type="button" class="smart-lock-btn" onclick="toggleSmartLock()" style="background:rgba(20,147,209,0.1);color:#1493d1;border:1px solid rgba(20,147,209,0.45);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:600;letter-spacing:0.02em;cursor:pointer;white-space:nowrap;transition:all 0.15s;">Click to add &middot; $110</button>
+            </div>
+            <hr class="border-gray-200 my-3">
+            <div class="flex justify-between text-2xl"><span class="text-navy-700 font-bold">Total</span><span><span class="text-navy-700 font-bold cost-input" data-dv-total contenteditable="true" spellcheck="false">$340</span><span class="text-navy-700 font-bold"> / home</span></span></div>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-500 italic mb-3">*~$150 of the total cost is paid to the electrician for the Deako base system</p>
+      <div class="savings-highlight rounded-2xl px-10 py-6 max-w-2xl">
+        <p class="text-4xl font-black gradient-text" data-savings-line>Lower your Base Home Cost by $663</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3: AT {BUILDER} SCALE ==================== -->
+  <div class="slide" data-slide="3">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 text-center fade-in bg-navy-700 py-8">
+      <p class="text-orange-400 font-semibold text-sm tracking-widest uppercase mb-4">At {Builder} Scale</p>
+      <h2 class="text-3xl md:text-5xl font-bold mb-2 text-white" data-slide5-title>What $663/home looks like<br>across all divisions</h2>
+      <p class="text-xs text-navy-300 mb-7">Based on 2,317 closings in 2025 (Builder Magazine #36)</p>
+
+      <!-- BIG ROLLUP — primary visual -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl w-full mb-8">
+        <div class="bg-navy-800 rounded-2xl p-8 border border-navy-600 text-center">
+          <p class="text-navy-300 text-sm uppercase tracking-widest mb-3 font-semibold">{Builder} National</p>
+          <p class="text-6xl md:text-8xl font-black text-orange-400 leading-none" data-national>$1.54M</p>
+          <p class="text-navy-200 text-base md:text-lg mt-3 font-semibold">per year in savings</p>
+          <p class="text-xs text-navy-400 mt-2">2,317 closings &middot; 10 states</p>
+        </div>
+        <div class="bg-gradient-to-b from-orange-400/20 to-navy-800 rounded-2xl p-8 border border-orange-400/40 text-center">
+          <p class="text-navy-300 text-sm uppercase tracking-widest mb-3 font-semibold">5-Year Outlook</p>
+          <p class="text-6xl md:text-8xl font-black text-orange-400 leading-none" data-fiveyear>$7.68M</p>
+          <p class="text-orange-400 text-base md:text-lg mt-3 font-semibold">cumulative savings</p>
+          <p class="text-xs text-navy-400 mt-2">at current closing pace</p>
+        </div>
+      </div>
+
+      <!-- DIVISION breakdown — compact / secondary -->
+      <p class="text-[10px] text-navy-400 mb-2 uppercase tracking-widest">Per Division &middot; Annual</p>
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-2 max-w-5xl w-full">
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-orange-400/30 text-center">
+          <p class="text-orange-400 text-[10px] uppercase tracking-wider font-semibold leading-tight">Pittsburgh</p>
+          <p class="text-navy-400 text-[9px] mb-1">PA &middot; HQ</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="pittsburgh" data-comm="22">~$239K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">Columbus</p>
+          <p class="text-navy-400 text-[9px] mb-1">OH</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="columbus" data-comm="13">~$141K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">Jacksonville</p>
+          <p class="text-navy-400 text-[9px] mb-1">FL</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="jacksonville" data-comm="13">~$141K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">Orlando</p>
+          <p class="text-navy-400 text-[9px] mb-1">FL</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="orlando" data-comm="13">~$141K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">Melbourne</p>
+          <p class="text-navy-400 text-[9px] mb-1">FL</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="melbourne" data-comm="12">~$130K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">Virginia</p>
+          <p class="text-navy-400 text-[9px] mb-1">VA &middot; MD</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="virginia" data-comm="12">~$130K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">Cincinnati</p>
+          <p class="text-navy-400 text-[9px] mb-1">OH &middot; KY</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="cincinnati" data-comm="11">~$119K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">Tampa</p>
+          <p class="text-navy-400 text-[9px] mb-1">FL</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="tampa" data-comm="8">~$87K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">SW Florida</p>
+          <p class="text-navy-400 text-[9px] mb-1">FL</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="sw_florida" data-comm="6">~$65K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">West Virginia</p>
+          <p class="text-navy-400 text-[9px] mb-1">WV</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="west_virginia" data-comm="4">~$43K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">Georgia</p>
+          <p class="text-navy-400 text-[9px] mb-1">GA</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="georgia" data-comm="2">~$22K</span></p>
+        </div>
+        <div class="bg-navy-800 rounded-md py-2 px-2 border border-navy-600 text-center">
+          <p class="text-navy-300 text-[10px] uppercase tracking-wider font-semibold leading-tight">Alabama/Pensacola</p>
+          <p class="text-navy-400 text-[9px] mb-1">AL &middot; FL</p>
+          <p class="text-sm font-black text-orange-400 leading-none"><span data-division="alabama" data-comm="1">~$11K</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 4: THE PARTNERSHIP ==================== -->
+  <div class="slide" data-slide="4">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 text-center fade-in">
+      <p class="text-orange-400 font-semibold text-sm tracking-widest uppercase mb-8">The Partnership</p>
+      <!-- Logo lockup -->
+      <div style="display:flex;align-items:center;gap:24px;margin-bottom:40px;">
+        <div style="background:white;border-radius:12px;padding:14px 24px;display:flex;align-items:center;gap:16px;border:1px solid #e5e7eb;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+          <img src="https://shop.deako.com/cdn/shop/files/Deako_2025_logo_500px_white.png?v=1743474883" alt="Deako" style="height:32px;filter:invert(1);" onerror="this.style.display='none'">
+          <div style="width:1px;height:36px;background:#d1d5db;"></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">
+            <p style="font-size:8px;font-weight:700;color:#1493d1;letter-spacing:0.12em;text-transform:uppercase;margin:0;line-height:1;">Certified Reseller of</p>
+            <img src="images/vivint-logo-house.svg" alt="Vivint" style="height:28px;" onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 text-navy-700 max-w-4xl">Deako is the certified reseller of Vivint<br>for the <span class="text-orange-400">builder channel</span></h2>
+      <p class="text-lg text-gray-500 mb-10 max-w-2xl">Two industry leaders. One integrated solution.</p>
+      <!-- Two columns -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full">
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm text-center">
+          <img src="https://shop.deako.com/cdn/shop/files/Deako_2025_logo_500px_white.png?v=1743474883" alt="Deako" style="height:28px;filter:invert(1);margin:0 auto 20px;" onerror="this.style.display='none'">
+          <div class="flex justify-center gap-8 mb-6">
+            <div>
+              <p class="text-4xl font-black text-navy-700">11</p>
+              <p class="text-gray-400 text-sm">years</p>
+            </div>
+            <div>
+              <p class="text-4xl font-black text-orange-400">450K+</p>
+              <p class="text-gray-400 text-sm">homes</p>
+            </div>
+          </div>
+          <p class="text-gray-500 text-sm">The builder channel expert. Deep relationships with national and regional builders across the country.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm text-center">
+          <img src="images/vivint-logo-house.svg" alt="Vivint" style="height:28px;margin:0 auto 20px;" onerror="this.style.display='none'">
+          <div class="flex justify-center gap-8 mb-6">
+            <div>
+              <p class="text-4xl font-black text-navy-700">27</p>
+              <p class="text-gray-400 text-sm">years</p>
+            </div>
+            <div>
+              <p class="text-4xl font-black text-orange-400">2M+</p>
+              <p class="text-gray-400 text-sm">homes</p>
+            </div>
+          </div>
+          <p class="text-gray-500 text-sm">The smart home and security leader. 27M+ devices managed, 12,000+ employees (no contractors)</p>
+        </div>
+      </div>
+      <p class="text-2xl md:text-3xl text-navy-700 font-semibold mt-12 max-w-4xl leading-snug">{Builder} works directly with <span class="text-orange-400">Deako</span> as a single point of contact.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 5: DEAKO + VIVINT SOLUTION ==================== -->
+  <div class="slide" data-slide="5">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 text-center fade-in">
+      <p class="text-orange-400 font-semibold text-sm tracking-widest uppercase mb-4">The Deako + Vivint Solution</p>
+      <h2 class="text-3xl md:text-5xl font-bold mb-6 leading-tight max-w-5xl text-navy-700 text-center">One app. One support line.<br><span style="display:inline-block;margin-top:0.25em;">Professionally installed.</span></h2>
+      <!-- Installer hero band — auto-plays when slide 11 is shown -->
+      <div class="max-w-5xl w-full rounded-2xl overflow-hidden mb-5" style="height:340px;">
+        <video data-slide-video data-target-slide="5" muted playsinline loop preload="auto" poster="images/vivint-installer-banner.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block;">
+          <source src="videos/vivint-white-glove.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div id="solutionGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl">
+        <div class="bg-white rounded-2xl p-6 border-2 border-navy-200 text-center shadow-sm">
+          <div class="h-40 flex items-center justify-center mb-3 bg-gray-50 rounded-xl p-3">
+            <img src="images/vivint-doorbell-pro.png" alt="Vivint Doorbell Camera Pro" class="max-h-36 object-contain rounded-lg" onerror="this.parentElement.innerHTML='<div class=\'text-5xl\'>🔔</div>'">
+          </div>
+          <p class="text-xl font-bold text-navy-700 mb-1">Vivint</p>
+          <p class="text-gray-400 text-sm whitespace-nowrap">Doorbell Camera</p>
+          <p class="text-orange-400 text-xs mt-2 font-semibold">Vivint app</p>
+        </div>
+        <div id="vivintLockCard" class="bg-white rounded-2xl p-6 border-2 border-navy-200 text-center shadow-sm" style="display:none;">
+          <div class="h-40 flex items-center justify-center mb-3 bg-gray-50 rounded-xl p-3">
+            <img src="images/vivint-smart-lock-pair.png" alt="Vivint Smart Lock" class="max-h-36 object-contain rounded-lg" onerror="this.parentElement.innerHTML='<div class=\'text-5xl\'>🔒</div>'">
+          </div>
+          <p class="text-xl font-bold text-navy-700 mb-1">Vivint</p>
+          <p class="text-gray-400 text-sm">Smart Lock</p>
+          <p class="text-orange-400 text-xs mt-2 font-semibold">Vivint app</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border-2 border-navy-200 text-center shadow-sm">
+          <div class="h-40 flex items-center justify-center mb-3 bg-gray-50 rounded-xl p-3">
+            <img src="images/vivint-element-thermostat.png" alt="Vivint Element Thermostat" class="max-h-36 object-contain rounded-lg" onerror="this.parentElement.innerHTML='<div class=\'text-5xl\'>🌡️</div>'">
+          </div>
+          <p class="text-xl font-bold text-navy-700 mb-1">Vivint</p>
+          <p class="text-gray-400 text-sm">Thermostat</p>
+          <p class="text-orange-400 text-xs mt-2 font-semibold">Vivint app</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border-2 border-navy-200 text-center shadow-sm">
+          <div class="h-40 flex items-center justify-center mb-3 bg-gray-50 rounded-xl p-3">
+            <img src="images/deako-switch-faceplate.jpg" alt="Deako Smart Switch" class="max-h-36 object-contain rounded-lg" onerror="this.parentElement.innerHTML='<div class=\'text-5xl\'>💡</div>'">
+          </div>
+          <p class="text-xl font-bold text-navy-700 mb-1">Deako</p>
+          <p class="text-gray-400 text-sm">Lighting</p>
+          <p class="text-orange-400 text-xs mt-2 font-semibold">Vivint app</p>
+        </div>
+      </div>
+      <p class="text-2xl md:text-3xl text-navy-700 font-semibold mt-10 max-w-4xl leading-snug text-center">The Smart Home System <span class="text-orange-400">included in every home</span>.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 6: EXPANDABLE PLATFORM ==================== -->
+  <div class="slide" data-slide="6">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 text-center fade-in">
+      <p class="text-navy-400 font-semibold text-sm tracking-widest uppercase mb-6">Expandable Platform</p>
+      <h2 class="text-4xl md:text-6xl font-bold mb-10 text-navy-700">Optional add-ons for your homebuyers</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl">
+        <div class="bg-white rounded-xl p-6 border border-gray-200 text-center shadow-sm">
+          <div class="h-28 flex items-center justify-center mb-3 bg-gray-50 rounded-lg overflow-hidden">
+            <img src="images/vivint-indoor-camera-pro.png" alt="Indoor Camera" class="max-h-full max-w-full object-contain p-2">
+          </div>
+          <p class="font-semibold text-navy-700 text-sm">Indoor Camera</p>
+        </div>
+        <div class="bg-white rounded-xl p-6 border border-gray-200 text-center shadow-sm">
+          <div class="h-28 flex items-center justify-center mb-3 bg-gray-50 rounded-lg overflow-hidden">
+            <img src="images/vivint-outdoor-camera.jpg" alt="Outdoor Camera" class="max-h-full max-w-full object-contain p-2">
+          </div>
+          <p class="font-semibold text-navy-700 text-sm">Outdoor Camera</p>
+        </div>
+        <div class="bg-white rounded-xl p-6 border border-gray-200 text-center shadow-sm">
+          <div class="h-28 flex items-center justify-center mb-3 bg-gray-50 rounded-lg overflow-hidden">
+            <img src="images/vivint-spotlight.jpg" alt="Spotlight" class="max-h-full max-w-full object-contain p-2">
+          </div>
+          <p class="font-semibold text-navy-700 text-sm">Spotlight</p>
+        </div>
+        <div class="bg-white rounded-xl p-6 border border-gray-200 text-center shadow-sm">
+          <div class="h-28 flex items-center justify-center mb-3 bg-gray-50 rounded-lg overflow-hidden">
+            <img src="images/vivint-smoke-detector.jpg" alt="Smoke/CO Detector" class="max-h-full max-w-full object-contain p-2">
+          </div>
+          <p class="font-semibold text-navy-700 text-sm">Smoke/CO Detector</p>
+        </div>
+        <div class="bg-white rounded-xl p-6 border border-gray-200 text-center shadow-sm">
+          <div class="h-28 flex items-center justify-center mb-3 bg-gray-50 rounded-lg overflow-hidden">
+            <img src="images/vivint-water-sensor-flood.png" alt="Water Sensor" class="max-h-full max-w-full object-contain p-2">
+          </div>
+          <p class="font-semibold text-navy-700 text-sm">Water Sensor</p>
+        </div>
+        <div class="bg-white rounded-xl p-6 border border-gray-200 text-center shadow-sm">
+          <div class="h-28 flex items-center justify-center mb-3 bg-gray-50 rounded-lg overflow-hidden">
+            <img src="images/vivint-smart-hub.jpg" alt="Smart Hub" class="max-h-full max-w-full object-contain p-2">
+          </div>
+          <p class="font-semibold text-navy-700 text-sm">Smart Hub</p>
+        </div>
+        <div class="bg-white rounded-xl p-6 border border-gray-200 text-center shadow-sm">
+          <div class="h-28 flex items-center justify-center mb-3 bg-gray-50 rounded-lg overflow-hidden">
+            <img src="images/vivint-motion-sensor-new.png" alt="Motion Sensor" class="max-h-full max-w-full object-contain p-2">
+          </div>
+          <p class="font-semibold text-navy-700 text-sm">Motion Sensor</p>
+        </div>
+        <div class="bg-white rounded-xl p-6 border border-gray-200 text-center shadow-sm">
+          <div class="h-28 flex items-center justify-center mb-3 bg-gray-50 rounded-lg overflow-hidden">
+            <img src="images/deako-smart-switch-gen2.jpg" alt="Deako Smart Switch" class="max-h-full max-w-full object-contain p-2">
+          </div>
+          <p class="font-semibold text-navy-700 text-sm">Deako Smart Switches</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== SLIDE 7: HOMEBUYER EXPERIENCE ==================== -->
+  <div class="slide" data-slide="7">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 text-center fade-in">
+      <p class="text-navy-400 font-semibold text-sm tracking-widest uppercase mb-3">The Homebuyer Experience</p>
+      <h2 class="text-4xl md:text-6xl font-bold mb-0 leading-tight text-navy-700">White glove from<br>close to connected</h2>
+      <!-- Banner: SOLD → installer meeting → install. The source image has
+           thick black padding baked in at top/bottom, so we crop it via
+           aspect-ratio + object-fit:cover to match the visual density of
+           the original white-glove banner. -->
+      <div class="max-w-5xl w-full rounded-2xl overflow-hidden mb-3 -mt-4" style="aspect-ratio:5/2;">
+        <img src="images/vivint-customer-flow.png" alt="Vivint customer flow: from sold to installed" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+      </div>
+      <div class="max-w-5xl w-full relative mt-0" style="padding:0 20px;">
+        <!-- Connecting line -->
+        <div style="position:absolute;top:28px;left:calc(12.5% + 20px);right:calc(12.5% + 20px);height:3px;background:#1493d1;z-index:0;"></div>
+        <div class="flex items-start justify-between gap-2">
+          <!-- Step 1 -->
+          <div class="flex flex-col items-center flex-1 relative z-10">
+            <div style="width:56px;height:56px;border-radius:50%;background:white;border:3px solid #0e1827;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#0e1827;margin-bottom:14px;">1</div>
+            <p class="font-semibold text-navy-700 text-base text-center leading-tight">{Builder} sells<br>the home</p>
+            <p class="text-gray-500 text-sm text-center mt-2 leading-snug">Buyer experiences the smart home in the model — outfitted and showcased by Deako.</p>
+          </div>
+          <!-- Step 2 -->
+          <div class="flex flex-col items-center flex-1 relative z-10">
+            <div style="width:56px;height:56px;border-radius:50%;background:white;border:3px solid #0e1827;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#0e1827;margin-bottom:14px;">2</div>
+            <p class="font-semibold text-navy-700 text-base text-center leading-tight">Deako meets with<br>every buyer</p>
+            <p class="text-gray-500 text-sm text-center mt-2 leading-snug">Answers all questions, walks through homebuyer options, and schedules the install for after WiFi is setup.</p>
+          </div>
+          <!-- Step 3 -->
+          <div class="flex flex-col items-center flex-1 relative z-10">
+            <div style="width:56px;height:56px;border-radius:50%;background:#1493d1;border:3px solid #1493d1;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:white;margin-bottom:14px;">3</div>
+            <p class="font-semibold text-navy-700 text-base text-center leading-tight">Vivint installs<br>products</p>
+            <p class="text-gray-500 text-sm text-center mt-2 leading-snug">Install all remaining hardware, and demonstrate for home buyer.</p>
+          </div>
+          <!-- Step 4 -->
+          <div class="flex flex-col items-center flex-1 relative z-10">
+            <div style="width:56px;height:56px;border-radius:50%;background:#1493d1;border:3px solid #1493d1;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:white;margin-bottom:14px;">4</div>
+            <p class="font-semibold text-navy-700 text-base text-center leading-tight">Vivint 24/7 support<br>to home buyer</p>
+            <p class="text-gray-500 text-sm text-center mt-2 leading-snug">Vivint has local technicians that can provide at-home or remote support.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- ==================== SLIDE 8: HOMEBUYER DEMAND (TOP 10) ==================== -->
+  <div class="slide" data-slide="8">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 fade-in">
+      <p class="text-orange-400 font-semibold text-sm tracking-widest uppercase mb-3 text-center">Homebuyer Demand</p>
+      <h2 class="text-4xl md:text-6xl font-bold mb-3 text-navy-700 text-center">&hellip;And Homebuyers want it!</h2>
+      <p class="text-lg md:text-2xl text-gray-500 mb-10 font-semibold text-center">Top 10 Most Desired Smart Home Technologies</p>
+
+      <!-- Chart -->
+      <div class="max-w-6xl w-full">
+        <div style="position:relative;height:320px;display:flex;align-items:flex-end;">
+          <!-- Highlight panel behind top 5 -->
+          <div style="position:absolute;left:0;top:0;bottom:0;width:50%;background:rgba(20,147,209,0.12);border-radius:14px;"></div>
+          <!-- Bars (10 equal flex columns) -->
+          <div style="position:relative;z-index:1;display:flex;align-items:flex-end;height:100%;width:100%;">
+            <!-- #1 Smart Security Systems -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:80%;background:#0e1827;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:12px;"><span style="color:white;font-weight:800;font-size:18px;">#1</span></div>
+            </div>
+            <!-- #2 Smart Thermostats -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:73%;background:#0e1827;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:12px;"><span style="color:white;font-weight:800;font-size:18px;">#2</span></div>
+            </div>
+            <!-- #3 Video Doorbells & Cameras -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:66%;background:#0e1827;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:12px;"><span style="color:white;font-weight:800;font-size:18px;">#3</span></div>
+            </div>
+            <!-- #4 Smart Lighting Systems -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:58%;background:#0e1827;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:12px;"><span style="color:white;font-weight:800;font-size:18px;">#4</span></div>
+            </div>
+            <!-- #5 Smart Locks / Keyless Entry -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:50%;background:#0e1827;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:12px;"><span style="color:white;font-weight:800;font-size:18px;">#5</span></div>
+            </div>
+            <!-- #6 Whole-Home Wi-Fi -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:32%;background:#cbd5d9;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;"><span style="color:#374151;font-weight:800;font-size:14px;">#6</span></div>
+            </div>
+            <!-- #7 Smart Garage Door Openers -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:28%;background:#cbd5d9;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;"><span style="color:#374151;font-weight:800;font-size:14px;">#7</span></div>
+            </div>
+            <!-- #8 Voice Assistant Integration -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:24%;background:#cbd5d9;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;"><span style="color:#374151;font-weight:800;font-size:14px;">#8</span></div>
+            </div>
+            <!-- #9 Smart Irrigation Systems -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:22%;background:#cbd5d9;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;"><span style="color:#374151;font-weight:800;font-size:14px;">#9</span></div>
+            </div>
+            <!-- #10 Smart Appliances -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding:0 8px;">
+              <div style="width:100%;height:18%;background:#cbd5d9;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:6px;"><span style="color:#374151;font-weight:800;font-size:13px;">#10</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Baseline + labels -->
+        <div style="display:flex;border-top:2px solid #9ca3af;padding-top:10px;margin-top:0;">
+          <div style="flex:1;text-align:center;font-size:11px;color:#0e1827;font-weight:600;line-height:1.25;padding:0 6px;">Smart<br>Security<br>Systems</div>
+          <div style="flex:1;text-align:center;font-size:11px;color:#0e1827;font-weight:600;line-height:1.25;padding:0 6px;">Smart<br>Thermostats</div>
+          <div style="flex:1;text-align:center;font-size:11px;color:#0e1827;font-weight:600;line-height:1.25;padding:0 6px;">Video<br>Doorbells<br>&amp; Cameras</div>
+          <div style="flex:1;text-align:center;font-size:11px;color:#0e1827;font-weight:600;line-height:1.25;padding:0 6px;">Smart<br>Lighting<br>Systems</div>
+          <div style="flex:1;text-align:center;font-size:11px;color:#0e1827;font-weight:600;line-height:1.25;padding:0 6px;">Smart<br>Locks /<br>Keyless<br>Entry</div>
+          <div style="flex:1;text-align:center;font-size:11px;color:#6b7280;line-height:1.25;padding:0 6px;">Whole-Home<br>Wi-Fi / Mesh<br>Networking</div>
+          <div style="flex:1;text-align:center;font-size:11px;color:#6b7280;line-height:1.25;padding:0 6px;">Smart<br>Garage Door<br>Openers</div>
+          <div style="flex:1;text-align:center;font-size:11px;color:#6b7280;line-height:1.25;padding:0 6px;">Voice<br>Assistant<br>Integration</div>
+          <div style="flex:1;text-align:center;font-size:11px;color:#6b7280;line-height:1.25;padding:0 6px;">Smart<br>Irrigation<br>Systems</div>
+          <div style="flex:1;text-align:center;font-size:11px;color:#6b7280;line-height:1.25;padding:0 6px;">Smart<br>Appliances</div>
+        </div>
+      </div>
+
+      <p class="text-xs md:text-sm text-gray-500 italic mt-8 text-center max-w-4xl">Parks Associates, Next-Generation Smart Home: Building for the Future, NAHB 2025 &ldquo;What Homebuyers Really Want&rdquo;</p>
+    </div>
+  </div>
+
+<!-- ==================== SLIDE 9: COMPETITIVE REALITY ==================== -->
+  <div class="slide" data-slide="9">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 py-8 fade-in">
+      <div class="max-w-6xl w-full text-left">
+        <p class="text-orange-400 font-semibold text-sm tracking-widest uppercase mb-3">The Competitive Reality</p>
+        <h2 class="text-3xl md:text-5xl font-bold text-navy-700 leading-tight mb-2" style="font-family:'Lora',serif;">
+          In every market you build,<br>
+          your competitors already <em class="text-orange-400">deliver a smart home</em>.
+        </h2>
+        <p class="text-base md:text-lg text-gray-500 mb-7">Standard. In every home. Not an upgrade.</p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-7">
+        <div class="bg-white border-t-2 border-navy-700 rounded-md shadow-sm p-4">
+          <p class="text-sm font-bold text-navy-700">Pittsburgh</p>
+          <p class="text-[11px] text-gray-400 italic mb-3">{Builder} HQ market</p>
+          <ul class="space-y-1.5">
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>D.R. Horton</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Ryan Homes</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>NVHomes</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>DRB / Dan Ryan</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+          </ul>
+        </div>
+        <div class="bg-white border-t-2 border-navy-700 rounded-md shadow-sm p-4">
+          <p class="text-sm font-bold text-navy-700">Ohio + N. Kentucky</p>
+          <p class="text-[11px] text-gray-400 italic mb-3">MI Homes' home turf</p>
+          <ul class="space-y-1.5">
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>MI Homes</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>D.R. Horton</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>PulteGroup</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Ryan Homes</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+          </ul>
+        </div>
+        <div class="bg-white border-t-2 border-navy-700 rounded-md shadow-sm p-4">
+          <p class="text-sm font-bold text-navy-700">Tampa Bay</p>
+          <p class="text-[11px] text-gray-400 italic mb-3">West-saturated FL market</p>
+          <ul class="space-y-1.5">
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Lennar</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>D.R. Horton</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Taylor Morrison</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Meritage</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+          </ul>
+        </div>
+        <div class="bg-white border-t-2 border-navy-700 rounded-md shadow-sm p-4">
+          <p class="text-sm font-bold text-navy-700">Orlando</p>
+          <p class="text-[11px] text-gray-400 italic mb-3">Pulte #1 in market</p>
+          <ul class="space-y-1.5">
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>D.R. Horton</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Lennar</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Taylor Morrison</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Meritage</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+          </ul>
+        </div>
+        <div class="bg-white border-t-2 border-navy-700 rounded-md shadow-sm p-4">
+          <p class="text-sm font-bold text-navy-700">Jacksonville</p>
+          <p class="text-[11px] text-gray-400 italic mb-3">Lennar #1 in market</p>
+          <ul class="space-y-1.5">
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Lennar</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>D.R. Horton</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>KB Home</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Toll Brothers</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+          </ul>
+        </div>
+        <div class="bg-white border-t-2 border-navy-700 rounded-md shadow-sm p-4">
+          <p class="text-sm font-bold text-navy-700">Northern VA + MD</p>
+          <p class="text-[11px] text-gray-400 italic mb-3">NVR's home turf</p>
+          <ul class="space-y-1.5">
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Ryan Homes</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>NVHomes</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>D.R. Horton</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Toll Brothers</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+          </ul>
+        </div>
+        <div class="bg-white border-t-2 border-navy-700 rounded-md shadow-sm p-4">
+          <p class="text-sm font-bold text-navy-700">Southwest FL</p>
+          <p class="text-[11px] text-gray-400 italic mb-3">Cape Coral, Naples, Fort Myers</p>
+          <ul class="space-y-1.5">
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Lennar</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>D.R. Horton</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>PulteGroup</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Taylor Morrison</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+          </ul>
+        </div>
+        <div class="bg-white border-t-2 border-navy-700 rounded-md shadow-sm p-4">
+          <p class="text-sm font-bold text-navy-700">Greenville/Spartanburg + AL</p>
+          <p class="text-[11px] text-gray-400 italic mb-3">{Builder}'s newer markets</p>
+          <ul class="space-y-1.5">
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>D.R. Horton</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Lennar</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>Meritage</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+              <li class="flex items-center justify-between text-sm text-gray-700"><span>DRB Homes</span><span class="text-orange-400 font-bold flex-shrink-0">&check;</span></li>
+          </ul>
+        </div>
+        </div>
+
+        <div class="bg-navy-700 rounded-2xl px-8 py-6 flex flex-col md:flex-row items-center gap-5">
+          <span class="text-orange-400 font-black leading-none flex-shrink-0" style="font-size:5.5rem;">25/30</span>
+          <p class="text-white text-base md:text-lg leading-relaxed">
+            of the largest U.S. homebuilders ship smart home as a standard feature today.<br>
+            <span class="font-semibold">The question buyers ask is no longer &ldquo;does it have smart home?&rdquo; &mdash; it&rsquo;s &ldquo;what&rsquo;s included?&rdquo;</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 10: BUILT TO EVOLVE ==================== -->
+  <style>
+    .ai-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ai-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/7;
+      background: linear-gradient(135deg, #0e1827 0%, #1493d1 200%);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ai-thumb > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.95);
+      transition: filter 0.25s, transform 0.25s;
+    }
+    .ai-thumb:hover > img { filter: brightness(1.06); transform: scale(1.06); }
+    .ai-thumb .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      transition: background 0.2s;
+      pointer-events: none;
+    }
+    .ai-thumb:hover .play-overlay { background: rgba(20,147,209,0.18); }
+    .ai-thumb .play-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: transparent;
+      border: 3px solid rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.30);
+      transition: transform 0.25s, border-color 0.25s, background 0.25s;
+    }
+    .ai-thumb .play-icon svg {
+      width: 26px;
+      height: 26px;
+      fill: white;
+      margin-left: 4px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.45));
+    }
+    .ai-thumb:hover .play-icon {
+      transform: scale(1.08);
+      background: rgba(20,147,209,0.25);
+      border-color: white;
+    }
+    .ai-card-title { font-size: 16px; font-weight: 700; color: #0e1827; line-height: 1.2; margin: 0; }
+    .ai-card-sub   { font-size: 11px; color: #1493d1; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 -4px 0; }
+    .ai-card-bullets { margin: 0; padding: 0; list-style: none; font-size: 12px; color: #4b5563; line-height: 1.45; }
+    .ai-card-bullets li { padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .ai-card-bullets li::before { content: ""; position: absolute; left: 0; top: 7px; width: 4px; height: 4px; border-radius: 50%; background: #1493d1; }
+    /* Modal for video playback */
+    .ai-video-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .ai-video-modal.open { display: flex; }
+    .ai-video-modal-inner { width: min(90vw, 1100px); aspect-ratio: 16/9; background: black; border-radius: 12px; overflow: hidden; position: relative; }
+    .ai-video-modal-inner video, .ai-video-modal-inner iframe { width: 100%; height: 100%; border: 0; display: block; }
+    .ai-video-close { position: absolute; top: -12px; right: -12px; width: 40px; height: 40px; border-radius: 50%; background: white; color: #0e1827; border: 0; cursor: pointer; font-size: 18px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  </style>
+  <div class="slide" data-slide="10">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 py-4 fade-in">
+      <p class="text-orange-400 font-semibold text-xs tracking-widest uppercase mb-2 text-center">What's Next</p>
+      <h2 class="text-2xl md:text-4xl font-bold mb-2 leading-tight text-navy-700 text-center max-w-5xl">Built to Evolve. Built to Differentiate.</h2>
+      <p class="text-sm md:text-base text-gray-600 max-w-3xl text-center mb-4 leading-snug">Buyer expectations move fast. Deako Connectors let your homes adopt new capabilities without rewiring &mdash; and the Intelligent home is the next leap.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-5xl w-full">
+        <!-- Adaptive Lighting -->
+        <div class="ai-card">
+          <div class="ai-thumb" onclick="playDeakoVideo('lighting')">
+            <img src="images/deako-ai-lighting.jpg" alt="Adaptive Lighting demo">
+            <div class="play-overlay"><div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          </div>
+          <p class="ai-card-sub">Adaptive Lighting</p>
+          <h3 class="ai-card-title">More than just motion sensing</h3>
+          <ul class="ai-card-bullets">
+            <li>Lights your path automatically &mdash; on when you arrive, off when you leave</li>
+            <li>Learns your routines and gets smarter over time</li>
+            <li>Adjusts color to support energy, focus, and sleep</li>
+          </ul>
+        </div>
+        <!-- Follow-Me Sound -->
+        <div class="ai-card">
+          <div class="ai-thumb" onclick="playDeakoVideo('sound')">
+            <img src="images/deako-ai-sound.jpg" alt="Follow-Me Sound demo">
+            <div class="play-overlay"><div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          </div>
+          <p class="ai-card-sub">Follow-Me Sound</p>
+          <h3 class="ai-card-title">Music that moves with you</h3>
+          <ul class="ai-card-bullets">
+            <li>Audio follows you from room to room</li>
+            <li>Adapts to multiple people and volume preferences</li>
+            <li>Turns existing speakers into one connected system</li>
+          </ul>
+        </div>
+        <!-- Intercom -->
+        <div class="ai-card">
+          <div class="ai-thumb" onclick="playDeakoVideo('intercom')">
+            <img src="images/deako-ai-intercom.jpg" alt="Intercom demo">
+            <div class="play-overlay"><div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          </div>
+          <p class="ai-card-sub">Intercom</p>
+          <h3 class="ai-card-title">Talk to every room from any room</h3>
+          <ul class="ai-card-bullets">
+            <li>Routes voice to occupied rooms &mdash; no more yelling</li>
+            <li>Built-in speaker and mic for two-way communication</li>
+            <li>Auto-adjusts volume to ambient noise</li>
+          </ul>
+        </div>
+        <!-- Parent Care -->
+        <div class="ai-card">
+          <div class="ai-thumb" onclick="playDeakoVideo('care')">
+            <img src="images/deako-ai-care.jpg" alt="Parent Care demo">
+            <div class="play-overlay"><div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          </div>
+          <p class="ai-card-sub">Parent Care</p>
+          <h3 class="ai-card-title">Know they're ok without calling every day</h3>
+          <ul class="ai-card-bullets">
+            <li>No cameras or wearables &mdash; protects independence and dignity</li>
+            <li>Radar monitors activity and learns routines over time</li>
+            <li>Check in or get alerts via the Intercom Switch</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ==================== SLIDE 11: CASE FOR CHANGE ==================== -->
+  <div class="slide" data-slide="11">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 text-center fade-in py-6">
+      <p class="text-orange-400 font-semibold text-sm tracking-widest uppercase mb-3 mt-8">The Case for Change</p>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6 text-navy-700">Why make the switch?</h2>
+      <div class="inline-flex flex-col space-y-3">
+        <div class="flex items-center gap-5 bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+          <div class="icon-sm bg-orange-100 text-orange-600 flex-shrink-0">$</div>
+          <p class="text-lg text-gray-600 text-left whitespace-nowrap"><span class="text-navy-700 font-bold">Save $663 per home</span> — more products at less cost than today</p>
+        </div>
+        <div class="flex items-center gap-5 bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+          <div class="icon-sm bg-orange-100 text-orange-600 flex-shrink-0">🤝</div>
+          <p class="text-lg text-gray-600 text-left whitespace-nowrap"><span class="text-navy-700 font-bold">One vendor relationship</span> — Deako is the single point of contact for {Builder}</p>
+        </div>
+        <div class="flex items-center gap-5 bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+          <div class="icon-sm bg-orange-100 text-orange-600 flex-shrink-0">🏠</div>
+          <p class="text-lg text-gray-600 text-left whitespace-nowrap"><span class="text-navy-700 font-bold">Better for homebuyers</span> — white glove install, one app, onsite support by one of Vivint's 12,000 employees</p>
+        </div>
+        <div class="flex items-center gap-5 bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+          <div class="icon-sm bg-navy-100 text-navy-700 flex-shrink-0">🔒</div>
+          <p class="text-lg text-gray-600 text-left whitespace-nowrap"><span class="text-navy-700 font-bold">Offer Monitored Security</span> — 50% of new home buyers buy a monitored security system</p>
+        </div>
+        <div class="flex items-center gap-5 bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+          <div class="icon-sm bg-navy-100 text-navy-700 flex-shrink-0">⬆</div>
+          <p class="text-lg text-gray-600 text-left whitespace-nowrap"><span class="text-navy-700 font-bold">Expandable platform</span> — smart cameras, sensors, smart smoke detectors, & more</p>
+        </div>
+        <div class="flex items-center gap-5 bg-orange-50 rounded-xl p-4 border border-orange-200 shadow-sm">
+          <div class="icon-sm bg-orange-200 text-orange-700 flex-shrink-0">✨</div>
+          <p class="text-lg text-navy-700 text-left font-semibold whitespace-nowrap">Sleek, modern products that look great in any home</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 12: RISK-REVERSED PILOT ==================== -->
+  <div class="slide" data-slide="12">
+    <div class="flex flex-col items-center justify-center min-h-screen w-full px-8 text-center fade-in bg-navy-700">
+      <p class="text-orange-400 font-semibold text-sm tracking-widest uppercase mb-4">Risk-reversed launch</p>
+      <h2 class="text-3xl md:text-5xl font-bold mb-3 text-white leading-tight">Run a pilot.<br><span class="text-orange-400">We'll absorb the risk.</span></h2>
+      <p class="text-base md:text-lg text-navy-200 max-w-3xl mb-8 leading-relaxed">Keep Deako Connectors, pick one division, prove the model.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-5xl w-full">
+        <div class="bg-navy-800 rounded-2xl p-6 border border-navy-600 text-left flex flex-col justify-center">
+          <p class="text-orange-400 font-bold text-xs tracking-widest uppercase mb-3">Pilot</p>
+          <ul class="space-y-2 text-base text-navy-100 leading-snug">
+            <li class="flex gap-2"><span class="text-orange-400 font-bold flex-shrink-0">&check;</span><span>Pick a division</span></li>
+          </ul>
+        </div>
+        <div class="bg-navy-800 rounded-2xl p-6 border border-navy-600 text-left">
+          <p class="text-orange-400 font-bold text-xs tracking-widest uppercase mb-3">Success of pilot</p>
+          <ul class="space-y-2 text-base text-navy-100 leading-snug">
+            <li class="flex gap-2"><span class="text-orange-400 font-bold flex-shrink-0">&check;</span><span><span class="text-white font-semibold">Prove</span> you can cut cost</span></li>
+            <li class="flex gap-2"><span class="text-orange-400 font-bold flex-shrink-0">&check;</span><span><span class="text-white font-semibold">Prove</span> you can simplify operations</span></li>
+            <li class="flex gap-2"><span class="text-orange-400 font-bold flex-shrink-0">&check;</span><span><span class="text-white font-semibold">Prove</span> you can delight homebuyers</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-6 savings-highlight rounded-2xl px-8 py-4 max-w-3xl">
+        <p class="text-base md:text-lg font-bold text-white">If the <span class="text-orange-400">numbers</span>, <span class="text-orange-400">quality</span> and <span class="text-orange-400">homebuyer sentiment</span> don't beat your current model, you exit clean.</p>
+      </div>
+      <div class="mt-6 bg-navy-800 rounded-2xl p-5 border border-navy-600 max-w-md">
+        <p class="text-sm text-navy-300 mb-1">Decision owner</p>
+        <p class="text-lg text-white font-bold">Derek Richardson &middot; CEO, Deako</p>
+        <p class="text-orange-400 font-semibold text-sm mt-1">dxr@deako.com &nbsp;&middot;&nbsp; (408) 410-4448</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video modal (single shared instance) -->
+  <div class="ai-video-modal" id="aiVideoModal" onclick="closeDeakoVideo(event)">
+    <div class="ai-video-modal-inner" id="aiVideoModalInner" onclick="event.stopPropagation()">
+      <button class="ai-video-close" onclick="closeDeakoVideo()">&times;</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== Slide 4 / 5: editable Today-side prices, live recalc =====
+    (function () {
+      const STORAGE_KEY = 'skyx-today-costs';
+      const DV_BASE = 340;        // Deako + Vivint base total
+      const CLOSINGS_PER_YR = 2317;
+      const DEFAULTS = { deako_base: 150, deako_pack: 388, ring: 200, kwikset: 150, honeywell: 115 };
+
+      function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+      // parsePrice returns the magnitude only — sign is handled by the data-sign attr below
+      function parsePrice(s) {
+        const m = String(s).replace(/[^0-9.]/g, '');
+        return Math.max(0, Math.round(parseFloat(m) || 0));
+      }
+      function readSign(el) {
+        // Either the explicit attr or, as a fallback, a minus sign in the visible text
+        if (el.dataset.sign) return parseInt(el.dataset.sign, 10) < 0 ? -1 : 1;
+        return /[\-−]/.test(String(el.textContent)) ? -1 : 1;
+      }
+      function getCosts() {
+        const out = {};
+        document.querySelectorAll('.cost-input[data-cost]').forEach(el => {
+          out[el.dataset.cost] = parsePrice(el.textContent) * readSign(el);
+        });
+        return out;
+      }
+      function getDvBase() {
+        const el = document.querySelector('[data-dv-total]');
+        return el ? parsePrice(el.textContent) : DV_BASE;
+      }
+      function recalc() {
+        const costs = getCosts();
+        const total = Math.max(0, Object.values(costs).reduce((a, b) => a + b, 0));
+        const dvBase = getDvBase();
+        const savings = Math.max(0, total - dvBase);
+        // Today total
+        const totEl = document.querySelector('[data-cost-total]');
+        if (totEl) totEl.textContent = fmt(total) + ' / home';
+        // Savings tag line
+        const savingsEl = document.querySelector('[data-savings-line]');
+        if (savingsEl) savingsEl.textContent = `Lower your Base Home Cost by ${fmt(savings)}`;
+        // Slide 5 title
+        const titleEl = document.querySelector('[data-slide5-title]');
+        if (titleEl) titleEl.innerHTML = `What ${fmt(savings)}/home looks like<br>across all divisions`;
+        // Per-division values: comm_count * 20 closings/yr * savings, in $K
+        document.querySelectorAll('[data-division][data-comm]').forEach(el => {
+          const comm = parseInt(el.dataset.comm, 10) || 0;
+          const value = comm * 20 * savings;
+          el.textContent = '~$' + Math.round(value / 1000).toLocaleString() + 'K';
+        });
+        // National yearly + 5-year
+        const national = CLOSINGS_PER_YR * savings;
+        const fiveyear = national * 5;
+        const natEl = document.querySelector('[data-national]');
+        const fivEl = document.querySelector('[data-fiveyear]');
+        if (natEl) natEl.textContent = national >= 1e6
+          ? '$' + (national / 1e6).toFixed(2) + 'M'
+          : '$' + Math.round(national / 1000) + 'K';
+        if (fivEl) fivEl.textContent = fiveyear >= 1e6
+          ? '$' + (fiveyear / 1e6).toFixed(2) + 'M'
+          : '$' + Math.round(fiveyear / 1000) + 'K';
+        // Persist — only Today-side editable prices. The V+D total ($340 base
+        // + any optional lock add-on) is intentionally NOT persisted so each
+        // page view starts with a clean total.
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(costs));
+        } catch (e) {}
+      }
+      function fmtSigned(el, magnitude) {
+        return (readSign(el) < 0 ? '−' : '') + fmt(magnitude);
+      }
+      function loadCosts() {
+        try {
+          // Strip any legacy __dvBase from earlier builds — the V+D total
+          // is no longer persisted (see recalc()), so old caches must not
+          // re-seed it and double-add the optional lock on next reload.
+          const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+          if (stored.__dvBase !== undefined) {
+            delete stored.__dvBase;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+          }
+          document.querySelectorAll('.cost-input[data-cost]').forEach(el => {
+            const k = el.dataset.cost;
+            if (typeof stored[k] === 'number') el.textContent = fmtSigned(el, Math.abs(stored[k]));
+          });
+        } catch (e) {}
+      }
+      function init() {
+        loadCosts();
+        document.querySelectorAll('.cost-input[data-cost]').forEach(el => {
+          el.addEventListener('input', recalc);
+          el.addEventListener('blur', () => {
+            // Normalize formatting on blur — preserve negative sign for rebate-style rows
+            const v = parsePrice(el.textContent);
+            el.textContent = fmtSigned(el, v);
+            recalc();
+          });
+          el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+          });
+        });
+        // Editable Deako + Vivint total (right side of the cost slide)
+        const dvEl = document.querySelector('[data-dv-total]');
+        if (dvEl) {
+          dvEl.addEventListener('input', recalc);
+          dvEl.addEventListener('blur', () => {
+            dvEl.textContent = fmt(parsePrice(dvEl.textContent));
+            recalc();
+          });
+          dvEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); dvEl.blur(); }
+          });
+        }
+        // Smart-lock toggle never persists across page loads — every viewer
+        // starts with the lock OFF and the V+D total at its $340 base. This
+        // also clears any legacy key from earlier builds so old caches can't
+        // re-trigger a double-add of the $110 add-on.
+        try { localStorage.removeItem('skyx-lock-included'); } catch (e) {}
+        recalc();
+      }
+
+      // Smart Lock optional toggle: adds/subtracts $110 from the D+V total
+      function applySmartLock(included) {
+        const row = document.getElementById('smartLockRow');
+        const dvEl = document.querySelector('[data-dv-total]');
+        if (!row || !dvEl) return;
+        const wasIncluded = row.dataset.lockIncluded === 'true';
+        if (wasIncluded === included) return; // no change
+        const label = row.querySelector('.smart-lock-label');
+        const btn = row.querySelector('.smart-lock-btn');
+        const cur = parsePrice(dvEl.textContent);
+        if (included) {
+          dvEl.textContent = fmt(cur + 110);
+          row.dataset.lockIncluded = 'true';
+          if (label) label.classList.replace('text-gray-400', 'text-gray-500');
+          if (label) label.classList.remove('line-through');
+          if (btn) {
+            btn.textContent = 'Click to remove';
+            btn.style.background = '#1493d1';
+            btn.style.color = 'white';
+            btn.style.borderColor = '#1493d1';
+          }
+        } else {
+          dvEl.textContent = fmt(Math.max(0, cur - 110));
+          row.dataset.lockIncluded = 'false';
+          if (label) label.classList.replace('text-gray-500', 'text-gray-400');
+          if (label) label.classList.add('line-through');
+          if (btn) {
+            btn.textContent = 'Click to add · $110';
+            btn.style.background = 'rgba(20,147,209,0.1)';
+            btn.style.color = '#1493d1';
+            btn.style.borderColor = 'rgba(20,147,209,0.45)';
+          }
+        }
+        // Slide 6: show/hide the Vivint Smart Lock product card and adjust grid columns
+        const lockCard = document.getElementById('vivintLockCard');
+        const grid = document.getElementById('solutionGrid');
+        if (lockCard) lockCard.style.display = included ? '' : 'none';
+        if (grid) {
+          if (included) {
+            grid.classList.remove('md:grid-cols-3');
+            grid.classList.add('md:grid-cols-4');
+          } else {
+            grid.classList.remove('md:grid-cols-4');
+            grid.classList.add('md:grid-cols-3');
+          }
+        }
+        recalc();
+      }
+      window.toggleSmartLock = function () {
+        const row = document.getElementById('smartLockRow');
+        if (!row) return;
+        applySmartLock(row.dataset.lockIncluded !== 'true');
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+
+    // ===== Slide 17: Deako AI capability video player =====
+    // Drop your video URLs in here. Supports:
+    //   - Direct .mp4 / .webm files (uses <video>)
+    //   - YouTube/Vimeo embeds (uses <iframe>) — paste the EMBED URL,
+    //     e.g. https://www.youtube.com/embed/XXXX?autoplay=1
+    const DEAKO_AI_VIDEOS = {
+      lighting: 'https://www.youtube.com/embed/l467F0bxISA?autoplay=1&rel=0',
+      sound:    'https://www.youtube.com/embed/TtWb2-dWRxI?autoplay=1&rel=0',
+      intercom: 'https://www.youtube.com/embed/wrpnolHtfww?autoplay=1&rel=0',
+      care:        'https://www.youtube.com/embed/9E0Jrl3unLg?autoplay=1&rel=0',
+      testimonial: 'https://www.youtube.com/embed/wcotqyjNJmA?autoplay=1&rel=0',
+    };
+    // ===== YouTube IFrame API loader (lazy) =====
+    let __ytApiReady = false;
+    let __ytApiLoading = false;
+    const __ytApiQueue = [];
+    function loadYTApi(cb) {
+      if (window.YT && window.YT.Player) { cb(); return; }
+      __ytApiQueue.push(cb);
+      if (__ytApiLoading) return;
+      __ytApiLoading = true;
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+      window.onYouTubeIframeAPIReady = function () {
+        __ytApiReady = true;
+        while (__ytApiQueue.length) (__ytApiQueue.shift())();
+      };
+    }
+
+    // ===== Video player state for tracking =====
+    let __ytPlayer = null;
+    let __ytKey = null;
+    let __ytOpenedAt = 0;
+    let __ytMaxPct = 0;
+    let __ytProgressTimer = null;
+    let __ytEmitted = false;
+
+    function __pollProgress() {
+      if (!__ytPlayer || !__ytPlayer.getCurrentTime) return;
+      try {
+        const cur = __ytPlayer.getCurrentTime();
+        const dur = __ytPlayer.getDuration();
+        if (dur > 0) {
+          const pct = Math.min(100, Math.round((cur / dur) * 100));
+          if (pct > __ytMaxPct) __ytMaxPct = pct;
+        }
+      } catch (e) {}
+    }
+    function __emitVideoClose() {
+      if (!__ytKey || __ytEmitted) return;
+      __ytEmitted = true;
+      __pollProgress();
+      let watchedSec = 0, durationSec = 0;
+      try {
+        if (__ytPlayer && __ytPlayer.getCurrentTime) watchedSec = Math.round(__ytPlayer.getCurrentTime() || 0);
+        if (__ytPlayer && __ytPlayer.getDuration) durationSec = Math.round(__ytPlayer.getDuration() || 0);
+      } catch (e) {}
+      if (typeof window.__skyxTrack === 'function') {
+        window.__skyxTrack('video_close', {
+          videoKey: __ytKey,
+          watchedSec: watchedSec,
+          durationSec: durationSec,
+          maxPct: __ytMaxPct,
+          openMs: Date.now() - __ytOpenedAt
+        });
+      }
+    }
+    // Expose so the analytics unload handler can capture progress before flush
+    window.__captureVideoProgress = __emitVideoClose;
+
+    function __ytStateChange(e) {
+      if (typeof YT === 'undefined') return;
+      if (e.data === YT.PlayerState.PLAYING) {
+        if (!__ytProgressTimer) __ytProgressTimer = setInterval(__pollProgress, 1000);
+      } else {
+        if (__ytProgressTimer) { clearInterval(__ytProgressTimer); __ytProgressTimer = null; }
+        __pollProgress();
+        if (e.data === YT.PlayerState.ENDED) __ytMaxPct = 100;
+      }
+    }
+
+    function playDeakoVideo(key) {
+      const url = DEAKO_AI_VIDEOS[key];
+      const inner = document.getElementById('aiVideoModalInner');
+      const modal = document.getElementById('aiVideoModal');
+      if (!inner || !modal) return;
+      // Tear down any running player from a prior open
+      if (__ytPlayer) {
+        try { __emitVideoClose(); } catch (e) {}
+        try { __ytPlayer.destroy(); } catch (e) {}
+        __ytPlayer = null;
+      }
+      if (__ytProgressTimer) { clearInterval(__ytProgressTimer); __ytProgressTimer = null; }
+      inner.querySelectorAll('video, iframe, .ai-video-note, #aiYTPlayer').forEach(n => n.remove());
+
+      if (!url) {
+        const note = document.createElement('div');
+        note.className = 'ai-video-note';
+        note.style.cssText = 'color:#fff;width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;font-size:18px;line-height:1.5;';
+        note.innerHTML = `<div><strong>Video URL not configured for &ldquo;${key}&rdquo;</strong><br><span style="font-size:14px;opacity:0.8;">Add it to <code>DEAKO_AI_VIDEOS</code> in index.html</span></div>`;
+        inner.appendChild(note);
+        modal.classList.add('open');
+        return;
+      }
+
+      const isFile = /\.(mp4|webm|mov)(\?|$)/i.test(url);
+      if (isFile) {
+        const player = document.createElement('video');
+        player.src = url; player.controls = true; player.autoplay = true;
+        inner.appendChild(player);
+        modal.classList.add('open');
+        return;
+      }
+
+      // YouTube path — extract video id
+      const m = url.match(/embed\/([^?&\/]+)/);
+      const videoId = m ? m[1] : null;
+      if (!videoId) {
+        const f = document.createElement('iframe');
+        f.src = url;
+        f.allow = 'autoplay; fullscreen; encrypted-media';
+        f.allowFullscreen = true;
+        inner.appendChild(f);
+        modal.classList.add('open');
+        return;
+      }
+      const placeholder = document.createElement('div');
+      placeholder.id = 'aiYTPlayer';
+      placeholder.style.cssText = 'width:100%;height:100%;';
+      inner.appendChild(placeholder);
+      modal.classList.add('open');
+
+      __ytKey = key;
+      __ytOpenedAt = Date.now();
+      __ytMaxPct = 0;
+      __ytEmitted = false;
+
+      loadYTApi(function () {
+        __ytPlayer = new YT.Player('aiYTPlayer', {
+          videoId: videoId,
+          playerVars: { autoplay: 1, rel: 0, modestbranding: 1, playsinline: 1 },
+          events: { onStateChange: __ytStateChange }
+        });
+      });
+    }
+
+    function closeDeakoVideo(evt) {
+      if (evt && evt.target && evt.target.id !== 'aiVideoModal' && !evt.target.classList.contains('ai-video-close')) return;
+      const modal = document.getElementById('aiVideoModal');
+      const inner = document.getElementById('aiVideoModalInner');
+      if (!modal || !inner) return;
+      __emitVideoClose();
+      if (__ytPlayer) {
+        try { __ytPlayer.destroy(); } catch (e) {}
+        __ytPlayer = null;
+      }
+      if (__ytProgressTimer) { clearInterval(__ytProgressTimer); __ytProgressTimer = null; }
+      __ytKey = null;
+      modal.classList.remove('open');
+      inner.querySelectorAll('video, iframe, .ai-video-note, #aiYTPlayer').forEach(n => n.remove());
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDeakoVideo({ target: document.getElementById('aiVideoModal') });
+    });
+
+    // ===== Slide 14: Deako switch + bubble drag editor =====
+    (function () {
+      const STORAGE_KEY = 'skyx-deako-positions';
+      let editMode = false;
+
+      function $$(sel, root) { return Array.from((root || document).querySelectorAll(sel)); }
+      function $(sel, root) { return (root || document).querySelector(sel); }
+
+      function savePositions() {
+        const positions = {};
+        $$('.deako-switch').forEach(el => {
+          positions[el.dataset.room] = { left: el.style.left, top: el.style.top };
+        });
+        const bubble = $('#deakoBubble');
+        if (bubble) positions._bubble = { left: bubble.style.left, top: bubble.style.top };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
+      }
+
+      function loadPositions() {
+        try {
+          const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+          Object.entries(stored).forEach(([key, pos]) => {
+            const el = key === '_bubble'
+              ? $('#deakoBubble')
+              : (key.startsWith('_') ? null : $(`.deako-switch[data-room="${key}"]`));
+            if (el) {
+              if (pos.left) el.style.left = pos.left;
+              if (pos.top) el.style.top = pos.top;
+            }
+          });
+        } catch (e) {}
+      }
+
+      function makeDraggable(el) {
+        el.addEventListener('mousedown', (e) => {
+          if (!editMode) return;
+          e.preventDefault();
+          const stage = el.closest('.platform-stage');
+          const stageRect = stage.getBoundingClientRect();
+          const elRect = el.getBoundingClientRect();
+          const cx = elRect.left + elRect.width / 2;
+          const cy = elRect.top + elRect.height / 2;
+          const dx = cx - e.clientX;
+          const dy = cy - e.clientY;
+          function onMove(ev) {
+            const newCx = ev.clientX + dx;
+            const newCy = ev.clientY + dy;
+            const left = ((newCx - stageRect.left) / stageRect.width) * 100;
+            const top  = ((newCy - stageRect.top) / stageRect.height) * 100;
+            el.style.left = left.toFixed(2) + '%';
+            el.style.top  = top.toFixed(2) + '%';
+            updateLeader();
+          }
+          function onUp() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            savePositions();
+          }
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+      }
+
+      window.toggleSwitchEdit = function () {
+        editMode = !editMode;
+        document.body.classList.toggle('deako-edit', editMode);
+        const btn = document.getElementById('editSwitchesBtn');
+        if (btn) btn.textContent = editMode ? 'Done Editing' : 'Edit Switches';
+      };
+
+      function pctOfStage(el, stage) {
+        const sRect = stage.getBoundingClientRect();
+        const eRect = el.getBoundingClientRect();
+        return {
+          cx: ((eRect.left + eRect.width / 2 - sRect.left) / sRect.width) * 100,
+          cy: ((eRect.top + eRect.height / 2 - sRect.top) / sRect.height) * 100,
+          halfH: (eRect.height / 2 / sRect.height) * 100,
+          halfW: (eRect.width / 2 / sRect.width) * 100,
+        };
+      }
+
+      function updateLeader() {
+        const stage = $('#platformStage');
+        const bubble = $('#deakoBubble');
+        const target = $('.deako-switch[data-room="laundry"]');
+        const line = $('#deakoLeaderLine');
+        const dot = $('#deakoLeaderDot');
+        if (!stage || !bubble || !target || !line || !dot) return;
+        const b = pctOfStage(bubble, stage);
+        const t = pctOfStage(target, stage);
+        // Choose the bubble edge nearest to the target (top/bottom/left/right)
+        const dxBT = t.cx - b.cx;
+        const dyBT = t.cy - b.cy;
+        let startX = b.cx, startY = b.cy;
+        if (Math.abs(dyBT) > Math.abs(dxBT)) {
+          startY += dyBT > 0 ? b.halfH : -b.halfH;
+        } else {
+          startX += dxBT > 0 ? b.halfW : -b.halfW;
+        }
+        // Land on the bottom of the target switch (visual marker dot)
+        const endX = t.cx;
+        const endY = t.cy + t.halfH;
+        line.setAttribute('x1', startX);
+        line.setAttribute('y1', startY);
+        line.setAttribute('x2', endX);
+        line.setAttribute('y2', endY);
+        dot.setAttribute('cx', endX);
+        dot.setAttribute('cy', endY);
+      }
+
+      function init() {
+        loadPositions();
+        $$('.deako-switch, .deako-bubble').forEach(makeDraggable);
+        const img = $('.platform-stage img');
+        if (img && !img.complete) img.addEventListener('load', updateLeader);
+        updateLeader();
+        window.addEventListener('resize', updateLeader);
+      }
+
+      // Expose so showSlide can recompute when the slide becomes visible (display:none
+      // on inactive slides means getBoundingClientRect returns 0 during init)
+      window.deakoUpdateLeader = updateLeader;
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+
+    let current = 1;
+    const total = document.querySelectorAll('.slide').length;
+
+    function showSlide(n) {
+      if (n < 1 || n > total) return;
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const slide = document.querySelector(`[data-slide="${n}"]`);
+      slide.classList.add('active');
+      slide.querySelector('.fade-in')?.classList.remove('fade-in');
+      void slide.querySelector('div')?.offsetWidth;
+      slide.querySelector('div')?.classList.add('fade-in');
+      current = n;
+      document.getElementById('slideCounter').textContent = `${current} / ${total}`;
+      _updateFireworksBtn();
+      document.getElementById('progressBar').style.width = `${(current / total) * 100}%`;
+      // Re-anchor the slide-14 leader line whenever the platform slide becomes active
+      // (its rects are zero while display:none, so first paint after navigation
+      // can leave the line stale).
+      if (typeof window.deakoUpdateLeader === 'function') {
+        requestAnimationFrame(() => window.deakoUpdateLeader());
+      }
+      // Auto-play / pause inline videos tied to a specific slide
+      document.querySelectorAll('video[data-slide-video]').forEach(v => {
+        const target = parseInt(v.dataset.targetSlide, 10);
+        if (target === n) {
+          try { v.currentTime = 0; v.play().catch(() => {}); } catch (e) {}
+        } else {
+          try { v.pause(); v.currentTime = 0; } catch (e) {}
+        }
+      });
+    }
+
+    function nextSlide() { showSlide(current + 1); }
+    function prevSlide() { showSlide(current - 1); }
+
+    document.addEventListener('keydown', (e) => {
+      if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+      if (e.key === 'Home') { e.preventDefault(); showSlide(1); }
+      if (e.key === 'End') { e.preventDefault(); showSlide(total); }
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+    });
+
+    showSlide(1);
+
+    // ── Fireworks ──────────────────────────────────────────────────────────────
+    var _fwActive = false, _fwParticles = [];
+    function launchFireworks() {
+      if (_fwActive) return;
+      _fwActive = true;
+      var canvas = document.getElementById('fireworksCanvas');
+      canvas.style.display = 'block';
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      var ctx = canvas.getContext('2d');
+      var colors = ['#1493d1','#FF6B35','#0e1827','#ffffff','#FFD700','#FF4444','#44DDFF'];
+      _fwParticles = [];
+      var launches = 0, maxLaunches = 8;
+      function burst(x, y) {
+        var n = 80 + Math.random()*40;
+        for (var i = 0; i < n; i++) {
+          var angle = (Math.PI*2/n)*i + Math.random()*0.3;
+          var speed = 2 + Math.random()*5;
+          _fwParticles.push({
+            x:x, y:y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed - 2,
+            alpha:1, color: colors[Math.floor(Math.random()*colors.length)],
+            size: 2+Math.random()*3, decay: 0.013+Math.random()*0.007, tail:[]
+          });
+        }
+      }
+      function launchRocket() {
+        if (launches < maxLaunches) {
+          launches++;
+          var x = 0.15*window.innerWidth + Math.random()*0.7*window.innerWidth;
+          var y = 0.15*window.innerHeight + Math.random()*0.5*window.innerHeight;
+          setTimeout(function(cx,cy){return function(){burst(cx,cy);};}(x,y), 0);
+        }
+      }
+      var fwEndTime = Date.now() + maxLaunches * 350;
+      for (var k = 0; k < maxLaunches; k++) { setTimeout(launchRocket, k*300 + Math.random()*200); }
+      function animate() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        var alive = false;
+        for (var i = 0; i < _fwParticles.length; i++) {
+          var p = _fwParticles[i];
+          if (p.alpha <= 0) continue;
+          alive = true;
+          p.tail.push({x:p.x,y:p.y,a:p.alpha});
+          if (p.tail.length > 5) p.tail.shift();
+          for (var t = 0; t < p.tail.length; t++) {
+            ctx.globalAlpha = p.tail[t].a * (t/p.tail.length) * 0.4;
+            ctx.fillStyle = p.color;
+            ctx.beginPath(); ctx.arc(p.tail[t].x, p.tail[t].y, p.size*0.6, 0, Math.PI*2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+          ctx.globalAlpha = 1;
+          p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.vx *= 0.98;
+          p.alpha -= p.decay;
+        }
+        if (alive || Date.now() < fwEndTime) { requestAnimationFrame(animate); }
+        else { canvas.style.display='none'; _fwActive=false; _fwParticles=[]; }
+      }
+      animate();
+    }
+    function _updateFireworksBtn() {
+      var btn = document.getElementById('fireworksBtn');
+      var sep = document.getElementById('fireworksSep');
+      if (btn) btn.style.display = 'none';
+      if (sep) sep.style.display = 'none';
+    }
+
+  </script>
+
+  <!-- Screenshot Modal -->
+  <div class="screenshot-modal" id="screenshotModal" onclick="this.classList.remove('open')">
+    <img id="modalImg" src="">
+  </div>
+
+  <!-- Edit Mode Indicator -->
+  <div class="edit-indicator" id="editIndicator">EDIT MODE — click text to edit &middot; click image to reposition &middot; changes auto-save</div>
+
+  <!-- Image Edit Panel -->
+  <div id="imgEditPanel" style="display:none;position:fixed;z-index:300;background:rgba(0,42,66,0.97);border:1px solid rgba(20,147,209,0.4);border-radius:10px;padding:14px 16px;width:240px;box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <span style="color:#1493d1;font-size:11px;font-weight:700;letter-spacing:0.08em;font-family:'Centrano Book';">IMAGE ADJUST</span>
+      <span onclick="closeImgEdit()" style="color:#9ca3af;cursor:pointer;font-size:18px;line-height:1;padding:0 2px;">&times;</span>
+    </div>
+    <div style="color:#9ca3af;font-size:10px;font-family:'Centrano Book';margin-bottom:3px;">SCALE &nbsp;<span id="imgScaleVal" style="color:#1493d1;">1.0×</span></div>
+    <input type="range" id="imgScale" min="50" max="400" value="100" step="5" oninput="updateImgTransform()">
+    <div style="color:#9ca3af;font-size:10px;font-family:'Centrano Book';margin-bottom:3px;">LEFT / RIGHT &nbsp;<span id="imgPosXVal" style="color:#1493d1;">0</span></div>
+    <input type="range" id="imgPosX" min="-150" max="150" value="0" oninput="updateImgTransform()">
+    <div style="color:#9ca3af;font-size:10px;font-family:'Centrano Book';margin-bottom:3px;">UP / DOWN &nbsp;<span id="imgPosYVal" style="color:#1493d1;">0</span></div>
+    <input type="range" id="imgPosY" min="-150" max="150" value="0" oninput="updateImgTransform()">
+    <button onclick="resetImgEdit()" style="width:100%;padding:5px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:none;color:#9ca3af;font-size:10px;cursor:pointer;font-family:'Centrano Book';margin-top:6px;">Reset to Default</button>
+  </div>
+
+  <!-- Edit Toggle Button -->
+  <div class="edit-btn" id="editBtn" onclick="toggleEditMode()" title="Toggle text editing">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+  </div>
+
+  <!-- Feedback Widget -->
+  <div class="feedback-btn" onclick="toggleFeedback()" title="Give feedback on this slide">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </div>
+  <div class="feedback-panel" id="feedbackPanel">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <p style="font-weight:700;font-size:15px;color:#0e1827;margin:0;">Feedback</p>
+      <span style="font-size:12px;color:#9ca3af;" id="feedbackSlideLabel">Slide 1</span>
+    </div>
+    <textarea id="feedbackInput" placeholder="What's working? What needs fixing? Be specific..."></textarea>
+    <div style="display:flex;gap:8px;">
+      <button class="capture-btn" onclick="startCapture()" title="Capture a region of the screen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+        Capture Screen
+      </button>
+      <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()" style="flex:1;">
+        <span id="dropLabel">Drop, paste, or browse</span>
+        <img id="dropPreview" style="display:none;max-width:100%;max-height:120px;border-radius:6px;margin-top:4px;">
+      </div>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
+    <button class="submit" onclick="submitFeedback()">Add Feedback for This Slide</button>
+    <div class="feedback-list" id="feedbackList"></div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button onclick="exportFeedback()" style="flex:1;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:8px;color:#6b7280;font-size:12px;cursor:pointer;font-family:'Centrano Book';">Copy All Feedback</button>
+      <button onclick="clearFeedback()" style="flex:1;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:8px;color:#6b7280;font-size:12px;cursor:pointer;font-family:'Centrano Book';">Clear All</button>
+    </div>
+  </div>
+
+  <script>
+    let feedbackItems = JSON.parse(localStorage.getItem('skyx-feedback') || '[]');
+    let pendingScreenshot = null;
+
+    const dropZone = document.getElementById('dropZone');
+    const dropPreview = document.getElementById('dropPreview');
+    const dropLabel = document.getElementById('dropLabel');
+
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) processImageFile(file);
+    });
+
+    document.addEventListener('paste', (e) => {
+      const panel = document.getElementById('feedbackPanel');
+      if (!panel.classList.contains('open')) return;
+      const items = e.clipboardData.items;
+      for (let item of items) {
+        if (item.type.startsWith('image/')) {
+          e.preventDefault();
+          processImageFile(item.getAsFile());
+          break;
+        }
+      }
+    });
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) processImageFile(file);
+    }
+
+    function processImageFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        pendingScreenshot = e.target.result;
+        dropPreview.src = pendingScreenshot;
+        dropPreview.style.display = 'block';
+        dropLabel.textContent = 'Screenshot attached (click to change)';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearScreenshotPreview() {
+      pendingScreenshot = null;
+      dropPreview.style.display = 'none';
+      dropPreview.src = '';
+      dropLabel.textContent = 'Drop screenshot here, paste (Cmd+V), or click to browse';
+      document.getElementById('fileInput').value = '';
+    }
+
+    function toggleFeedback() {
+      const panel = document.getElementById('feedbackPanel');
+      panel.classList.toggle('open');
+      document.getElementById('feedbackSlideLabel').textContent = `Slide ${current} of ${total}`;
+      renderFeedback();
+    }
+
+    function submitFeedback() {
+      const input = document.getElementById('feedbackInput');
+      const text = input.value.trim();
+      if (!text && !pendingScreenshot) return;
+      feedbackItems.push({
+        slide: current,
+        text: text || '(screenshot only)',
+        screenshot: pendingScreenshot || null,
+        status: 'open',
+        timestamp: new Date().toLocaleString()
+      });
+      localStorage.setItem('skyx-feedback', JSON.stringify(feedbackItems));
+      input.value = '';
+      clearScreenshotPreview();
+      renderFeedback();
+    }
+
+    function showScreenshot(src) {
+      const modal = document.getElementById('screenshotModal');
+      document.getElementById('modalImg').src = src;
+      modal.classList.add('open');
+    }
+
+    function renderFeedback() {
+      const list = document.getElementById('feedbackList');
+      if (feedbackItems.length === 0) {
+        list.innerHTML = '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:12px;">No feedback yet. Review each slide and note what needs fixing.</p>';
+        return;
+      }
+      list.innerHTML = feedbackItems.map((item, i) => `
+        <div class="feedback-item">
+          <div class="slide-label">Slide ${item.slide} &middot; ${item.timestamp}</div>
+          <div>${item.text}</div>
+          ${item.screenshot ? `<img class="feedback-screenshot" src="${item.screenshot}" onclick="showScreenshot(this.src)" title="Click to enlarge">` : ''}
+          <div class="status ${item.status}">
+            ${item.status === 'open' ? '● Open' : '● Fixed'}
+            <span onclick="toggleStatus(${i})" style="margin-left:8px;cursor:pointer;color:#9ca3af;text-decoration:underline;">toggle</span>
+            <span onclick="removeFeedback(${i})" style="margin-left:8px;cursor:pointer;color:#9ca3af;text-decoration:underline;">remove</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleStatus(i) {
+      feedbackItems[i].status = feedbackItems[i].status === 'open' ? 'fixed' : 'open';
+      localStorage.setItem('skyx-feedback', JSON.stringify(feedbackItems));
+      renderFeedback();
+    }
+
+    function removeFeedback(i) {
+      feedbackItems.splice(i, 1);
+      localStorage.setItem('skyx-feedback', JSON.stringify(feedbackItems));
+      renderFeedback();
+    }
+
+    function exportFeedback() {
+      const text = feedbackItems.map(item =>
+        `[Slide ${item.slide}] [${item.status.toUpperCase()}]${item.screenshot ? ' [HAS SCREENSHOT]' : ''} ${item.text}`
+      ).join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Feedback copied to clipboard! Paste it into Claude to work through the items.\n\nFor items with screenshots, take a screenshot of the feedback panel showing the image and share it with Claude.');
+      });
+    }
+
+    function clearFeedback() {
+      if (confirm('Clear all feedback?')) {
+        feedbackItems = [];
+        localStorage.setItem('skyx-feedback', JSON.stringify(feedbackItems));
+        renderFeedback();
+      }
+    }
+
+    const origShowSlide = showSlide;
+    showSlide = function(n) {
+      origShowSlide(n);
+      const label = document.getElementById('feedbackSlideLabel');
+      if (label) label.textContent = `Slide ${current} of ${total}`;
+    };
+
+    // Screen capture tool - triggers Mac screenshot, then auto-catches paste
+    function startCapture() {
+      // Close feedback panel
+      document.getElementById('feedbackPanel').classList.remove('open');
+
+      // Show toast with instructions
+      const toast = document.createElement('div');
+      toast.className = 'capture-toast';
+      toast.id = 'captureToast';
+      toast.innerHTML = `
+        <div style="margin-bottom:12px;">Screenshot mode</div>
+        <div style="font-size:14px;font-weight:400;color:#b9c7df;line-height:1.8;">
+          Press <kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>Ctrl</kbd> <kbd>4</kbd> and drag to capture a region<br>
+          <span style="font-size:12px;color:#7a9bb5;">It copies to your clipboard automatically — we'll grab it.</span>
+        </div>
+        <div style="margin-top:16px;font-size:12px;color:#7a9bb5;">Press <kbd>Esc</kbd> to cancel</div>
+      `;
+      document.body.appendChild(toast);
+
+      // Auto-dismiss after 8 seconds if no action
+      const autoDismiss = setTimeout(() => {
+        cleanupToast();
+        document.getElementById('feedbackPanel').classList.add('open');
+      }, 8000);
+
+      // Listen for paste (the screenshot will be on clipboard)
+      const pasteHandler = (e) => {
+        const items = e.clipboardData.items;
+        for (let item of items) {
+          if (item.type.startsWith('image/')) {
+            e.preventDefault();
+            processImageFile(item.getAsFile());
+            cleanupToast();
+            clearTimeout(autoDismiss);
+            document.removeEventListener('paste', pasteHandler);
+            document.removeEventListener('keydown', escHandler);
+            // Reopen feedback panel
+            document.getElementById('feedbackPanel').classList.add('open');
+            break;
+          }
+        }
+      };
+
+      const escHandler = (e) => {
+        if (e.key === 'Escape') {
+          cleanupToast();
+          clearTimeout(autoDismiss);
+          document.removeEventListener('paste', pasteHandler);
+          document.removeEventListener('keydown', escHandler);
+          document.getElementById('feedbackPanel').classList.add('open');
+        }
+      };
+
+      // Slight delay so the toast disappears before screenshot
+      setTimeout(() => {
+        toast.style.display = 'none';
+        document.addEventListener('paste', pasteHandler);
+        document.addEventListener('keydown', escHandler);
+        // Show toast again briefly after screenshot is likely taken
+        setTimeout(() => {
+          if (document.getElementById('captureToast')) {
+            toast.style.display = 'block';
+            toast.innerHTML = '<div>Now press <kbd>⌘</kbd> <kbd>V</kbd> to attach the screenshot</div><div style="font-size:12px;color:#7a9bb5;margin-top:8px;">Press <kbd>Esc</kbd> to cancel</div>';
+          }
+        }, 500);
+      }, 1500);
+
+      function cleanupToast() {
+        const t = document.getElementById('captureToast');
+        if (t) t.remove();
+      }
+    }
+
+    // ========== GARAGE DOOR TOGGLE ==========
+    let garageIdx = 0;
+    function cycleGarage() {
+      const options = document.querySelectorAll('.garage-option');
+      garageIdx = garageIdx === 0 ? 1 : 0;
+      options.forEach((opt, i) => { opt.style.display = i === garageIdx ? 'block' : 'none'; });
+    }
+
+    // ========== INLINE TEXT EDITING ==========
+    let editMode = false;
+    const EDITS_KEY = 'skyx-text-edits';
+    const IMG_EDITS_KEY = 'skyx-img-edits';
+    const editableSelectors = 'h1, h2, h3, p, span, li';
+
+    function toggleEditMode() {
+      editMode = !editMode;
+      if (!editMode) closeImgEdit();
+      document.body.classList.toggle('edit-mode', editMode);
+      document.getElementById('editBtn').classList.toggle('active', editMode);
+
+      document.querySelectorAll('.slide ' + editableSelectors).forEach(el => {
+        // Skip elements that are just icons, images, or inside the feedback/nav
+        if (el.closest('.feedback-panel, .feedback-btn, .edit-btn, .browser-bar, .version-badge, .edit-indicator, script, style')) return;
+        if (el.children.length > 0 && el.textContent.trim().length < 3) return;
+
+        if (editMode) {
+          el.setAttribute('contenteditable', 'true');
+          el.addEventListener('blur', saveEdit);
+          el.addEventListener('keydown', handleEditKey);
+        } else {
+          el.removeAttribute('contenteditable');
+          el.removeEventListener('blur', saveEdit);
+          el.removeEventListener('keydown', handleEditKey);
+        }
+      });
+
+      document.querySelectorAll('.slide img').forEach(img => {
+        if (img.closest('.feedback-panel, .browser-bar, .version-badge')) return;
+        if (editMode) {
+          img.addEventListener('click', imgClickHandler);
+        } else {
+          img.removeEventListener('click', imgClickHandler);
+        }
+      });
+    }
+
+    // ── Image editing ────────────────────────────────────────────────────────
+    let imgEditTarget = null;
+
+    function imgClickHandler(e) {
+      e.stopPropagation();
+      openImgEdit(this, e);
+    }
+
+    function getImgKey(img) {
+      const slide = img.closest('.slide');
+      const slideNum = slide ? slide.getAttribute('data-slide') : '0';
+      const imgs = Array.from(slide.querySelectorAll('img'));
+      return slideNum + ':img[' + imgs.indexOf(img) + ']';
+    }
+
+    function openImgEdit(img, e) {
+      imgEditTarget = img;
+      // Parse existing transform: translate(tx%, ty%) scale(s)
+      const t = img.style.transform || '';
+      const tMatch = t.match(/translate\(([^,]+)%,\s*([^)]+)%\)/);
+      const sMatch = t.match(/scale\(([^)]+)\)/);
+      const tx = tMatch ? parseFloat(tMatch[1]) : 0;
+      const ty = tMatch ? parseFloat(tMatch[2]) : 0;
+      const scaleVal = sMatch ? Math.round(parseFloat(sMatch[1]) * 100) : 100;
+
+      document.getElementById('imgPosX').value = tx;
+      document.getElementById('imgPosY').value = ty;
+      document.getElementById('imgScale').value = scaleVal;
+      document.getElementById('imgPosXVal').textContent = tx;
+      document.getElementById('imgPosYVal').textContent = ty;
+      document.getElementById('imgScaleVal').textContent = (scaleVal / 100).toFixed(1) + '×';
+
+      const panel = document.getElementById('imgEditPanel');
+      const rect = img.getBoundingClientRect();
+      let top = rect.bottom + 10;
+      let left = rect.left;
+      if (top + 260 > window.innerHeight) top = rect.top - 270;
+      if (left + 250 > window.innerWidth) left = window.innerWidth - 256;
+      if (left < 8) left = 8;
+      panel.style.top = top + 'px';
+      panel.style.left = left + 'px';
+      panel.style.display = 'block';
+    }
+
+    function closeImgEdit() {
+      document.getElementById('imgEditPanel').style.display = 'none';
+      imgEditTarget = null;
+    }
+
+    function updateImgTransform() {
+      if (!imgEditTarget) return;
+      const x = parseFloat(document.getElementById('imgPosX').value);
+      const y = parseFloat(document.getElementById('imgPosY').value);
+      const s = parseFloat(document.getElementById('imgScale').value) / 100;
+      document.getElementById('imgPosXVal').textContent = x;
+      document.getElementById('imgPosYVal').textContent = y;
+      document.getElementById('imgScaleVal').textContent = s.toFixed(1) + '×';
+      imgEditTarget.style.transform = 'translate(' + x + '%, ' + y + '%) scale(' + s + ')';
+      imgEditTarget.style.transformOrigin = '50% 50%';
+      saveImgEdit();
+    }
+
+    function resetImgEdit() {
+      if (!imgEditTarget) return;
+      imgEditTarget.style.transform = '';
+      imgEditTarget.style.transformOrigin = '';
+      document.getElementById('imgPosX').value = 0;
+      document.getElementById('imgPosY').value = 0;
+      document.getElementById('imgScale').value = 100;
+      document.getElementById('imgPosXVal').textContent = '0';
+      document.getElementById('imgPosYVal').textContent = '0';
+      document.getElementById('imgScaleVal').textContent = '1.0×';
+      const edits = JSON.parse(localStorage.getItem(IMG_EDITS_KEY) || '{}');
+      delete edits[getImgKey(imgEditTarget)];
+      localStorage.setItem(IMG_EDITS_KEY, JSON.stringify(edits));
+    }
+
+    function saveImgEdit() {
+      if (!imgEditTarget) return;
+      const edits = JSON.parse(localStorage.getItem(IMG_EDITS_KEY) || '{}');
+      edits[getImgKey(imgEditTarget)] = { transform: imgEditTarget.style.transform };
+      localStorage.setItem(IMG_EDITS_KEY, JSON.stringify(edits));
+    }
+
+    function restoreImgEdits() {
+      const edits = JSON.parse(localStorage.getItem(IMG_EDITS_KEY) || '{}');
+      if (!Object.keys(edits).length) return;
+      document.querySelectorAll('.slide').forEach(slide => {
+        const slideNum = slide.getAttribute('data-slide');
+        Array.from(slide.querySelectorAll('img')).forEach((img, idx) => {
+          const ed = edits[slideNum + ':img[' + idx + ']'];
+          if (ed && ed.transform) { img.style.transform = ed.transform; img.style.transformOrigin = '50% 50%'; }
+        });
+      });
+    }
+
+    function handleEditKey(e) {
+      // Prevent slide navigation while editing
+      e.stopPropagation();
+      // Enter = done editing (blur)
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        e.target.blur();
+      }
+    }
+
+    function saveEdit(e) {
+      const el = e.target;
+      const slide = el.closest('.slide');
+      if (!slide) return;
+      const slideNum = slide.getAttribute('data-slide');
+      const key = slideNum + ':' + getElementPath(el);
+      const edits = JSON.parse(localStorage.getItem(EDITS_KEY) || '{}');
+      edits[key] = el.innerHTML;
+      localStorage.setItem(EDITS_KEY, JSON.stringify(edits));
+      // Also save to server (edits.json) so Claude can read them
+      try {
+        fetch('/save-edits', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(edits)
+        }).catch(() => {}); // silently fail if server isn't running
+      } catch(e) {}
+    }
+
+    function getElementPath(el) {
+      const parts = [];
+      let node = el;
+      while (node && node !== document.body) {
+        const parent = node.parentElement;
+        if (!parent) break;
+        const siblings = Array.from(parent.children).filter(c => c.tagName === node.tagName);
+        const idx = siblings.indexOf(node);
+        parts.unshift(node.tagName.toLowerCase() + (siblings.length > 1 ? '[' + idx + ']' : ''));
+        node = parent;
+      }
+      return parts.join('/');
+    }
+
+    // Restore saved edits on load
+    function restoreEdits() {
+      const edits = JSON.parse(localStorage.getItem(EDITS_KEY) || '{}');
+      if (Object.keys(edits).length === 0) return;
+
+      document.querySelectorAll('.slide').forEach(slide => {
+        const slideNum = slide.getAttribute('data-slide');
+        slide.querySelectorAll(editableSelectors).forEach(el => {
+          const key = slideNum + ':' + getElementPath(el);
+          if (edits[key] !== undefined) {
+            el.innerHTML = edits[key];
+          }
+        });
+      });
+    }
+
+    restoreEdits();
+    restoreImgEdits();
+  </script>
+
+  <!-- ===== Recipient analytics (JSONBin event log) =====
+       Sky X has its own tracking lane separate from the Maronda deck.
+       Flip SKYX_SPECIAL_TRACKING_ENABLED to true after a fresh JSONBin is
+       provisioned and the BIN/KEY constants below are filled in. Until then,
+       all tracking is a no-op (early return).
+  -->
+  <script>
+  window.SKYX_SPECIAL_TRACKING_ENABLED = false;
+  window.SKYX_TRACKING_BIN = 'PLACEHOLDER_SKYX_BIN_ID';
+  window.SKYX_TRACKING_KEY = 'PLACEHOLDER_SKYX_MASTER_KEY';
+  (function () {
+    if (!window.SKYX_SPECIAL_TRACKING_ENABLED) {
+      // Stub out the public tracker so callers don't blow up.
+      window.__skyxTrack = function () {};
+      return;
+    }
+    // Skip on localhost (so dev sessions don't pollute the log) and on the
+    // viewer page itself.
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return;
+    if (/analytics\.html?$/i.test(location.pathname)) return;
+
+    const params = new URLSearchParams(location.search);
+
+    // Private internal link: appending ?internal=1 (or ?notrack=1) suppresses
+    // tracking for that visit. Once visited, a flag is stored in
+    // localStorage so subsequent visits from that browser stay private even
+    // without the param — useful for colleagues who want a permanently
+    // untracked bookmark. Pass ?internal=0 to opt back in.
+    try {
+      const intParam = params.get('internal') || params.get('notrack');
+      if (intParam === '1') localStorage.setItem('skyx-internal', '1');
+      else if (intParam === '0') localStorage.removeItem('skyx-internal');
+    } catch (e) {}
+    try {
+      if (localStorage.getItem('skyx-internal') === '1') return;
+    } catch (e) {}
+
+    const BIN = window.SKYX_TRACKING_BIN;
+    const KEY = window.SKYX_TRACKING_KEY;
+    const URL = 'https://api.jsonbin.io/v3/b/' + BIN;
+
+    const recipient = (params.get('r') || '').trim() || '(untagged)';
+
+    // sessionStorage so reloads in the same tab share a session id
+    let sessionId = sessionStorage.getItem('skyx-analytics-session');
+    if (!sessionId) {
+      sessionId = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+      sessionStorage.setItem('skyx-analytics-session', sessionId);
+    }
+
+    const sessionStart = Date.now();
+    let lastSlide = 1;
+    let lastSlideEnter = sessionStart;
+
+    const buffer = [];
+    let flushTimer = null;
+    let flushing = false;
+
+    function track(action, detail) {
+      buffer.push({
+        ts: Date.now(),
+        sessionId: sessionId,
+        recipient: recipient,
+        action: action,
+        slide: detail && detail.slide !== undefined ? detail.slide : null,
+        detail: detail || {}
+      });
+      if (!flushTimer && !flushing) flushTimer = setTimeout(flush, 4000);
+    }
+    // Expose the tracker so other modules (the video player below) can emit
+    // structured events like video_close.
+    window.__skyxTrack = function (action, detail) {
+      const merged = Object.assign({ slide: lastSlide }, detail || {});
+      track(action, merged);
+    };
+
+    async function flush(opts) {
+      if (buffer.length === 0) { flushTimer = null; return; }
+      if (flushing) return;
+      flushing = true;
+      flushTimer = null;
+      const events = buffer.splice(0);
+      const useKeepalive = !!(opts && opts.keepalive);
+      try {
+        const r = await fetch(URL + '/latest', { headers: { 'X-Master-Key': KEY }, cache: 'no-store' });
+        const data = await r.json();
+        const existing = (data && data.record && Array.isArray(data.record.events)) ? data.record.events : [];
+        // Cap at 5000 events so the bin stays responsive
+        const merged = existing.concat(events).slice(-5000);
+        const init = {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': KEY },
+          body: JSON.stringify({ events: merged })
+        };
+        if (useKeepalive) init.keepalive = true;
+        await fetch(URL, init);
+      } catch (e) {
+        // Re-queue for next attempt
+        for (let i = events.length - 1; i >= 0; i--) buffer.unshift(events[i]);
+      } finally {
+        flushing = false;
+        if (buffer.length > 0 && !flushTimer) flushTimer = setTimeout(flush, 6000);
+      }
+    }
+
+    // ----- Open event -----
+    track('open', {
+      ua: navigator.userAgent.slice(0, 200),
+      viewport: window.innerWidth + 'x' + window.innerHeight,
+      referrer: (document.referrer || '').slice(0, 200),
+      lang: navigator.language || ''
+    });
+
+    // ----- Slide change tracking — wrap window.showSlide once it exists -----
+    function hookShowSlide() {
+      if (typeof window.showSlide !== 'function') {
+        return setTimeout(hookShowSlide, 100);
+      }
+      const orig = window.showSlide;
+      window.showSlide = function (n) {
+        const prev = lastSlide;
+        const dwell = Date.now() - lastSlideEnter;
+        if (n !== prev) {
+          track('slide_view', { slide: n, prevSlide: prev, prevDwellMs: dwell });
+          lastSlide = n;
+          lastSlideEnter = Date.now();
+        }
+        return orig.apply(this, arguments);
+      };
+    }
+    hookShowSlide();
+
+    // ----- Wrap playDeakoVideo to track plays -----
+    function hookPlayVideo() {
+      if (typeof window.playDeakoVideo !== 'function') {
+        return setTimeout(hookPlayVideo, 100);
+      }
+      const orig = window.playDeakoVideo;
+      window.playDeakoVideo = function (key) {
+        track('click', { slide: lastSlide, label: 'video-play:' + key });
+        return orig.apply(this, arguments);
+      };
+    }
+    hookPlayVideo();
+
+    // ----- Wrap toggleSmartLock so we capture the resulting state -----
+    function hookSmartLock() {
+      if (typeof window.toggleSmartLock !== 'function') {
+        return setTimeout(hookSmartLock, 100);
+      }
+      const orig = window.toggleSmartLock;
+      window.toggleSmartLock = function () {
+        const ret = orig.apply(this, arguments);
+        const row = document.getElementById('smartLockRow');
+        const included = !!(row && row.dataset.lockIncluded === 'true');
+        track('click', { slide: lastSlide, label: included ? 'smart-lock-add' : 'smart-lock-remove' });
+        return ret;
+      };
+    }
+    hookSmartLock();
+
+    // ----- Click delegation for cost-input edits, mailto/tel links -----
+    document.addEventListener('blur', function (e) {
+      const t = e.target;
+      if (t && t.classList && t.classList.contains('cost-input') && t.dataset.cost) {
+        track('click', { slide: lastSlide, label: 'cost-edit:' + t.dataset.cost, value: (t.textContent || '').trim() });
+      }
+      if (t && t.hasAttribute && t.hasAttribute('data-dv-total')) {
+        track('click', { slide: lastSlide, label: 'cost-edit:dv-total', value: (t.textContent || '').trim() });
+      }
+    }, true);
+    document.addEventListener('click', function (e) {
+      const a = e.target.closest && e.target.closest('a');
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (href.startsWith('mailto:') || href.startsWith('tel:')) {
+        track('click', { slide: lastSlide, label: href });
+      }
+    }, true);
+
+    // ----- Unload — flush with keepalive so the request survives close -----
+    function onLeave() {
+      // If a video is open, force the player to emit its video_close event
+      // before we flush so the watch-percentage stat isn't lost on tab-close.
+      try { if (typeof window.__captureVideoProgress === 'function') window.__captureVideoProgress(); } catch (e) {}
+      const dwell = Date.now() - lastSlideEnter;
+      const totalMs = Date.now() - sessionStart;
+      track('unload', { slide: lastSlide, slideDwellMs: dwell, totalMs: totalMs });
+      flush({ keepalive: true });
+    }
+    window.addEventListener('pagehide', onLeave);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') onLeave();
+    });
+  })();
+  </script>
+</body>
+</html>

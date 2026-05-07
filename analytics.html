@@ -1,0 +1,771 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Sky X Deck — Analytics</title>
+  <style>
+    :root {
+      --green: #1493d1;
+      --charcoal: #0e1827;
+      --bg: #f3f5f8;
+      --panel: #ffffff;
+      --line: #e2e7ee;
+      --muted: #6b7280;
+      --muted-2: #9ca3af;
+      --warn-bg: #fffbe6;
+      --green-soft: rgba(20,147,209,0.10);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Centrano Book", sans-serif;
+      background: var(--bg);
+      color: var(--charcoal);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    header {
+      background: var(--charcoal);
+      color: white;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    header .meta {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
+    header .actions {
+      display: flex;
+      gap: 8px;
+    }
+    button.btn {
+      background: var(--green);
+      color: white;
+      border: 0;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+    }
+    button.btn.ghost {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    button.btn:hover { opacity: 0.9; }
+
+    main {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: calc(100vh - 56px);
+    }
+    aside {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 16px 0;
+      overflow-y: auto;
+    }
+    aside h2 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 16px 10px;
+    }
+    .recipient {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 16px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      font-family: inherit;
+    }
+    .recipient.active {
+      background: var(--green-soft);
+      border-left-color: var(--green);
+    }
+    .recipient .name { font-weight: 700; font-size: 13px; }
+    .recipient .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .recipient .live-dot {
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); margin-left: 6px; vertical-align: middle;
+      box-shadow: 0 0 0 0 rgba(20,147,209,0.6);
+      animation: pulse 1.4s ease-out infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(20,147,209,0.6); }
+      100% { box-shadow: 0 0 0 8px rgba(20,147,209,0); }
+    }
+
+    section.content {
+      padding: 20px 28px 60px;
+      overflow-y: auto;
+    }
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .stat .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .stat .val { font-size: 22px; font-weight: 700; color: var(--charcoal); margin-top: 4px; }
+    .stat .sub { font-size: 11px; color: var(--muted-2); margin-top: 2px; }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+    .panel h3 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--charcoal);
+    }
+
+    /* Heat bar */
+    .heat-row {
+      display: grid;
+      grid-template-columns: 36px 220px 1fr 90px;
+      gap: 10px;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 12px;
+    }
+    .heat-row .num { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+    .heat-row .title { color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .heat-bar {
+      position: relative;
+      height: 16px;
+      background: #f1f3f4;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .heat-bar > div {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      background: linear-gradient(90deg, rgba(20,147,209,0.85), rgba(20,147,209,0.65));
+      border-radius: 4px;
+      min-width: 1px;
+    }
+    .heat-row .dur {
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      color: var(--charcoal);
+    }
+
+    /* Video engagement table */
+    .video-row {
+      display: grid;
+      grid-template-columns: 1fr 60px 60px 60px 60px 200px;
+      gap: 10px;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 12px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .video-row:last-child { border-bottom: 0; }
+    .video-row.video-head {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 700;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+      margin-bottom: 4px;
+    }
+    .video-row .v-label { color: var(--charcoal); font-weight: 600; }
+    .video-row .v-slide { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .video-row .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--charcoal); }
+    .video-row .v-bar {
+      position: relative;
+      height: 14px;
+      background: #f1f3f4;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .video-row .v-bar-fill {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      background: linear-gradient(90deg, rgba(20,147,209,0.85), rgba(20,147,209,0.65));
+      border-radius: 4px;
+    }
+    .video-row .v-bar-avg {
+      position: absolute;
+      top: -2px; bottom: -2px;
+      width: 2px;
+      background: var(--charcoal);
+    }
+
+    /* Session card */
+    .session {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+    .session .session-head {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed var(--line);
+    }
+    .session .session-head .h-id { font-size: 12px; color: var(--muted); font-family: ui-monospace, monospace; }
+    .session .session-head .h-when { font-size: 13px; font-weight: 700; }
+    .session .session-head .h-dur { font-size: 13px; color: var(--green); font-weight: 700; }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 76px 36px 1fr 70px;
+      gap: 10px;
+      align-items: baseline;
+      font-size: 12px;
+      padding: 3px 0;
+    }
+    .timeline-row .t { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .timeline-row .n { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; }
+    .timeline-row .ttl { color: var(--charcoal); }
+    .timeline-row .d { color: var(--charcoal); font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+    .timeline-row.long .d { color: var(--green); }
+    .timeline-row .star { color: var(--green); font-size: 11px; margin-left: 4px; }
+    .click-row {
+      grid-column: 3 / span 2;
+      font-size: 11px;
+      color: var(--muted);
+      padding: 1px 0 1px 14px;
+      border-left: 2px solid var(--green);
+      margin-left: 0;
+    }
+    .timeline-click-wrap {
+      display: grid;
+      grid-template-columns: 76px 36px 1fr 70px;
+      gap: 10px;
+      padding-bottom: 2px;
+    }
+
+    .empty {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty .lg { font-size: 16px; font-weight: 700; color: var(--charcoal); margin-bottom: 6px; }
+
+    @media (max-width: 760px) {
+      main { grid-template-columns: 1fr; }
+      aside { border-right: 0; border-bottom: 1px solid var(--line); padding: 12px 0; }
+      .heat-row { grid-template-columns: 28px 140px 1fr 68px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Sky X Deck — Analytics</h1>
+      <div class="meta" id="lastUpdated">loading…</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="refreshBtn" type="button">Refresh</button>
+      <button class="btn ghost" id="csvBtn" type="button">Export CSV</button>
+    </div>
+  </header>
+
+  <main>
+    <aside>
+      <h2>Recipients</h2>
+      <div id="recipientList"></div>
+    </aside>
+    <section class="content" id="content">
+      <div class="empty"><div class="lg">Loading events…</div><div>Pulling latest from JSONBin.</div></div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    // Sky X tracking is OFF until a fresh JSONBin is provisioned and these
+    // constants are filled in. Until then, the page renders an empty state.
+    const BIN = 'PLACEHOLDER_SKYX_BIN_ID';
+    const KEY = 'PLACEHOLDER_SKYX_MASTER_KEY';
+    const URL = 'https://api.jsonbin.io/v3/b/' + BIN + '/latest';
+    const REFRESH_MS = 30000;
+    const LIVE_THRESHOLD_MS = 2 * 60 * 1000; // session counted "live" if last event within 2 min
+
+    const SLIDE_TITLES = {
+      1:  'Opener',
+      2:  'The Bottom Line',
+      3:  'At {Builder} Scale',
+      4:  'The Partnership',
+      5:  'Deako + Vivint Solution',
+      6:  'Expandable Platform',
+      7:  'Homebuyer Experience',
+      8:  'Homebuyer Demand (Top 10)',
+      9:  'Competitive Reality',
+      10: 'Built to Evolve',
+      11: 'Case for Change',
+      12: 'Risk-Reversed Pilot'
+    };
+    const TOTAL_SLIDES = Object.keys(SLIDE_TITLES).length;
+
+    // The 5 clickable demo videos in the deck
+    const VIDEOS = [
+      { key: 'testimonial', label: 'Nate Amidon Testimonial', slide: 4  },
+      { key: 'lighting',    label: 'Adaptive Lighting',       slide: 11 },
+      { key: 'sound',       label: 'Follow-Me Sound',         slide: 11 },
+      { key: 'intercom',    label: 'Intercom',                slide: 11 },
+      { key: 'care',        label: 'Parent Care',             slide: 11 }
+    ];
+
+    let allEvents = [];
+    let activeRecipient = null;
+
+    function fmtMs(ms) {
+      if (ms == null || isNaN(ms)) return '—';
+      ms = Math.max(0, Math.round(ms));
+      if (ms < 1000) return ms + 'ms';
+      const s = Math.round(ms / 1000);
+      if (s < 60) return s + 's';
+      const m = Math.floor(s / 60);
+      const rs = s % 60;
+      if (m < 60) return m + 'm ' + (rs < 10 ? '0' : '') + rs + 's';
+      const h = Math.floor(m / 60);
+      return h + 'h ' + (m % 60) + 'm';
+    }
+    function fmtClock(ts) {
+      const d = new Date(ts);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    }
+    function fmtDateTime(ts) {
+      const d = new Date(ts);
+      return d.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+    }
+    function fmtRelative(ts) {
+      const diff = Date.now() - ts;
+      if (diff < 60_000) return Math.max(1, Math.floor(diff / 1000)) + 's ago';
+      if (diff < 3600_000) return Math.floor(diff / 60000) + ' min ago';
+      if (diff < 86400_000) return Math.floor(diff / 3600000) + ' hr ago';
+      return Math.floor(diff / 86400000) + ' d ago';
+    }
+    function browserShort(ua) {
+      ua = ua || '';
+      if (/edg/i.test(ua)) return 'edge';
+      if (/chrome/i.test(ua)) return 'chrome';
+      if (/firefox/i.test(ua)) return 'firefox';
+      if (/safari/i.test(ua)) return 'safari';
+      return 'browser';
+    }
+    function osShort(ua) {
+      ua = ua || '';
+      if (/windows/i.test(ua)) return 'windows';
+      if (/macintosh|mac os/i.test(ua)) return 'mac';
+      if (/iphone|ipad|ios/i.test(ua)) return 'ios';
+      if (/android/i.test(ua)) return 'android';
+      if (/linux/i.test(ua)) return 'linux';
+      return 'os';
+    }
+    function escapeHTML(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c];
+      });
+    }
+
+    async function load() {
+      const lu = document.getElementById('lastUpdated');
+      try {
+        lu.textContent = 'refreshing…';
+        const r = await fetch(URL, { headers: { 'X-Master-Key': KEY }, cache: 'no-store' });
+        const data = await r.json();
+        allEvents = (data && data.record && Array.isArray(data.record.events)) ? data.record.events : [];
+        allEvents.sort(function (a, b) { return a.ts - b.ts; });
+        lu.textContent = 'updated ' + new Date().toLocaleTimeString();
+        render();
+      } catch (e) {
+        lu.textContent = 'error: ' + e.message;
+      }
+    }
+
+    function computeVideoStats(events) {
+      // Use video_close events (each carries final maxPct for that open).
+      // For sessions where the user never closed the modal we fall back to
+      // counting video-play clicks as "opens" without a watch %.
+      const stats = {};
+      for (const v of VIDEOS) stats[v.key] = { opens: 0, maxPct: 0, avgPct: 0, _sum: 0, _n: 0 };
+      const playClicks = {};
+      for (const ev of events) {
+        if (ev.action === 'video_close') {
+          const k = ev.detail && ev.detail.videoKey;
+          if (!stats[k]) continue;
+          stats[k].opens += 1;
+          const pct = (ev.detail && typeof ev.detail.maxPct === 'number') ? ev.detail.maxPct : 0;
+          if (pct > stats[k].maxPct) stats[k].maxPct = pct;
+          stats[k]._sum += pct;
+          stats[k]._n += 1;
+        } else if (ev.action === 'click' && ev.detail && /^video-play:/.test(ev.detail.label || '')) {
+          const k = (ev.detail.label || '').slice('video-play:'.length);
+          playClicks[k] = (playClicks[k] || 0) + 1;
+        }
+      }
+      // Fall back to play-click count if we have plays but no closes (e.g.
+      // legacy events from before video tracking shipped, or the user
+      // navigated away mid-watch). Never let opens be lower than closes.
+      for (const k of Object.keys(stats)) {
+        const closeOpens = stats[k].opens;
+        const playOpens = playClicks[k] || 0;
+        stats[k].opens = Math.max(closeOpens, playOpens);
+        stats[k].avgPct = stats[k]._n > 0 ? Math.round(stats[k]._sum / stats[k]._n) : 0;
+      }
+      return stats;
+    }
+
+    function bySession(events) {
+      const m = new Map();
+      for (const ev of events) {
+        if (!m.has(ev.sessionId)) m.set(ev.sessionId, []);
+        m.get(ev.sessionId).push(ev);
+      }
+      return m;
+    }
+    function byRecipient(events) {
+      const m = new Map();
+      for (const ev of events) {
+        const r = ev.recipient || '(untagged)';
+        if (!m.has(r)) m.set(r, []);
+        m.get(r).push(ev);
+      }
+      return m;
+    }
+
+    function render() {
+      const recips = byRecipient(allEvents);
+      // Sort recipients by most recent activity
+      const ordered = Array.from(recips.entries()).sort(function (a, b) {
+        const aLast = a[1][a[1].length - 1].ts;
+        const bLast = b[1][b[1].length - 1].ts;
+        return bLast - aLast;
+      });
+
+      // Default-select first recipient if none chosen yet, or if current is gone
+      if (ordered.length > 0) {
+        const names = ordered.map(function (e) { return e[0]; });
+        if (!activeRecipient || !names.includes(activeRecipient)) {
+          activeRecipient = ordered[0][0];
+        }
+      } else {
+        activeRecipient = null;
+      }
+
+      // Sidebar
+      const list = document.getElementById('recipientList');
+      if (ordered.length === 0) {
+        list.innerHTML = '<div style="padding:14px 16px;color:var(--muted-2);font-size:12px;line-height:1.5;">Awaiting first visit.<br><span style="font-size:11px;">Send the deck with <code>?r=name</code> to start tracking.</span></div>';
+      } else {
+        list.innerHTML = ordered.map(function (entry) {
+          const name = entry[0];
+          const evs = entry[1];
+          const sessions = bySession(evs).size;
+          const lastTs = evs[evs.length - 1].ts;
+          const isLive = (Date.now() - lastTs) < LIVE_THRESHOLD_MS;
+          return (
+            '<button type="button" class="recipient' + (name === activeRecipient ? ' active' : '') + '" data-name="' + escapeHTML(name) + '">'
+            + '<div class="name">' + escapeHTML(name) + (isLive ? '<span class="live-dot" title="Active in last 2 minutes"></span>' : '') + '</div>'
+            + '<div class="sub">' + sessions + ' session' + (sessions === 1 ? '' : 's') + ' &middot; ' + escapeHTML(fmtRelative(lastTs)) + '</div>'
+            + '</button>'
+          );
+        }).join('');
+        Array.from(list.querySelectorAll('.recipient')).forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            activeRecipient = btn.dataset.name;
+            render();
+          });
+        });
+      }
+
+      // Content — always render the structure so the user sees every
+      // tracked category up-front. With no events the panels are zeroed
+      // out (heat bars empty, video table all dashes, sessions empty).
+      const content = document.getElementById('content');
+      const displayName = activeRecipient || '(awaiting first visit)';
+      const evs = activeRecipient ? (recips.get(activeRecipient) || []) : [];
+      content.innerHTML = renderRecipient(displayName, evs);
+    }
+
+    function buildSession(events) {
+      // events are sorted ascending
+      const open = events.find(function (e) { return e.action === 'open'; });
+      const start = open ? open.ts : events[0].ts;
+
+      // Reconstruct slide visits from slide_view records (each contains prevDwellMs for the prior slide)
+      // Plus the unload event has the final slide dwell
+      const visits = []; // {slide, enterTs, dwellMs, clicks: []}
+      let curSlide = 1;
+      let curEnter = start;
+      const slideViews = events.filter(function (e) { return e.action === 'slide_view'; });
+      for (const ev of slideViews) {
+        const prevSlide = (ev.detail && ev.detail.prevSlide) || curSlide;
+        const dwell = (ev.detail && ev.detail.prevDwellMs) || (ev.ts - curEnter);
+        visits.push({ slide: prevSlide, enterTs: curEnter, dwellMs: dwell, clicks: [] });
+        curSlide = ev.slide || ev.detail.slide;
+        curEnter = ev.ts;
+      }
+      // Final slide — close it with unload or last-event timestamp
+      const unload = events.slice().reverse().find(function (e) { return e.action === 'unload'; });
+      const lastTs = unload ? unload.ts : events[events.length - 1].ts;
+      const finalDwell = (unload && unload.detail && unload.detail.slideDwellMs) || (lastTs - curEnter);
+      visits.push({ slide: curSlide, enterTs: curEnter, dwellMs: finalDwell, clicks: [] });
+
+      // Attach clicks to the visit they fall inside
+      const clicks = events.filter(function (e) { return e.action === 'click'; });
+      for (const c of clicks) {
+        // Find latest visit whose enterTs <= c.ts
+        let target = null;
+        for (const v of visits) {
+          if (v.enterTs <= c.ts) target = v;
+        }
+        if (target) target.clicks.push(c);
+      }
+
+      const totalMs = (unload && unload.detail && unload.detail.totalMs) || (lastTs - start);
+      const slidesSeen = new Set(visits.map(function (v) { return v.slide; })).size;
+
+      return {
+        sessionId: events[0].sessionId,
+        startTs: start,
+        endTs: lastTs,
+        totalMs: totalMs,
+        slidesSeen: slidesSeen,
+        visits: visits,
+        meta: open ? (open.detail || {}) : {},
+        clicks: clicks,
+        events: events
+      };
+    }
+
+    function renderRecipient(name, events) {
+      const sessionMap = bySession(events);
+      const sessions = Array.from(sessionMap.values())
+        .map(function (evs) { return evs.sort(function (a, b) { return a.ts - b.ts; }); })
+        .map(buildSession)
+        .sort(function (a, b) { return b.startTs - a.startTs; });
+
+      // ---- Aggregates ----
+      const totalSessions = sessions.length;
+      const avgSession = sessions.length ? sessions.reduce(function (s, x) { return s + x.totalMs; }, 0) / sessions.length : 0;
+      const allClicks = sessions.reduce(function (s, x) { return s + x.clicks.length; }, 0);
+
+      // Slide totals (sum of dwell across all sessions)
+      const slideTotal = {};
+      for (let s = 1; s <= TOTAL_SLIDES; s++) slideTotal[s] = 0;
+      for (const sess of sessions) {
+        for (const v of sess.visits) {
+          slideTotal[v.slide] = (slideTotal[v.slide] || 0) + (v.dwellMs || 0);
+        }
+      }
+      const maxSlide = Math.max.apply(null, Object.values(slideTotal).concat([1]));
+
+      // Click hotspots
+      const clickCounts = {};
+      for (const sess of sessions) {
+        for (const c of sess.clicks) {
+          const k = (c.detail && c.detail.label) || 'click';
+          clickCounts[k] = (clickCounts[k] || 0) + 1;
+        }
+      }
+      const topClicks = Object.entries(clickCounts).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 6);
+
+      // Furthest reached
+      let furthest = 0;
+      for (const sess of sessions) {
+        for (const v of sess.visits) furthest = Math.max(furthest, v.slide);
+      }
+
+      // ---- Render ----
+      let html = '';
+
+      // Stat row
+      html += '<div class="stat-row">';
+      html += '<div class="stat"><div class="label">Sessions</div><div class="val">' + totalSessions + '</div></div>';
+      html += '<div class="stat"><div class="label">Avg session</div><div class="val">' + escapeHTML(fmtMs(avgSession)) + '</div></div>';
+      const furthestVal = furthest > 0 ? ('Slide ' + furthest) : '—';
+      const furthestSub = furthest > 0 ? (Math.round((furthest / TOTAL_SLIDES) * 100) + '% through deck') : 'no visits yet';
+      html += '<div class="stat"><div class="label">Furthest reached</div><div class="val">' + escapeHTML(furthestVal) + '</div><div class="sub">' + escapeHTML(furthestSub) + '</div></div>';
+      html += '<div class="stat"><div class="label">Total clicks</div><div class="val">' + allClicks + '</div></div>';
+      html += '</div>';
+
+      // Heat bar
+      html += '<div class="panel"><h3>Time spent per slide (across ' + totalSessions + ' session' + (totalSessions === 1 ? '' : 's') + ')</h3>';
+      for (let s = 1; s <= TOTAL_SLIDES; s++) {
+        const dur = slideTotal[s] || 0;
+        const pct = maxSlide > 0 ? (dur / maxSlide) * 100 : 0;
+        html += '<div class="heat-row">';
+        html += '<div class="num">#' + s + '</div>';
+        html += '<div class="title">' + escapeHTML(SLIDE_TITLES[s] || ('Slide ' + s)) + '</div>';
+        html += '<div class="heat-bar"><div style="width:' + pct.toFixed(1) + '%"></div></div>';
+        html += '<div class="dur">' + escapeHTML(fmtMs(dur)) + '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+
+      // Video engagement
+      const videoStats = computeVideoStats(events);
+      html += '<div class="panel"><h3>Video engagement</h3>';
+      html += '<div class="video-row video-head"><div>Video</div><div>Slide</div><div class="num">Opens</div><div class="num">Max %</div><div class="num">Avg %</div><div>Watch progress</div></div>';
+      for (const v of VIDEOS) {
+        const s = videoStats[v.key];
+        const opens = s ? s.opens : 0;
+        const maxPct = s ? s.maxPct : 0;
+        const avgPct = s ? s.avgPct : 0;
+        html += '<div class="video-row">';
+        html += '<div class="v-label">' + escapeHTML(v.label) + '</div>';
+        html += '<div class="v-slide">#' + v.slide + '</div>';
+        html += '<div class="num">' + opens + '</div>';
+        html += '<div class="num">' + (opens ? maxPct + '%' : '—') + '</div>';
+        html += '<div class="num">' + (opens ? avgPct + '%' : '—') + '</div>';
+        html += '<div class="v-bar"><div class="v-bar-fill" style="width:' + (opens ? maxPct : 0) + '%"></div>';
+        html += opens ? '<div class="v-bar-avg" style="left:' + avgPct + '%"></div>' : '';
+        html += '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+
+      // Click hotspots (other interactive elements)
+      const filteredClicks = topClicks.filter(function (r) {
+        return !/^video-play:/.test(r[0]);
+      });
+      if (filteredClicks.length > 0) {
+        html += '<div class="panel"><h3>Click hotspots</h3>';
+        html += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+        for (const row of filteredClicks) {
+          html += '<tr><td style="padding:4px 0;color:var(--charcoal);">' + escapeHTML(row[0]) + '</td><td style="padding:4px 0;text-align:right;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;">' + row[1] + 'Ã—</td></tr>';
+        }
+        html += '</table></div>';
+      }
+
+      // Sessions
+      html += '<div class="panel"><h3>Sessions</h3>';
+      if (sessions.length === 0) {
+        html += '<div class="empty"><div class="lg">No sessions yet</div><div>Each visit shows up here as a timeline of slide views with click breadcrumbs.</div></div>';
+      } else {
+        for (const sess of sessions) {
+          html += renderSession(sess);
+        }
+      }
+      html += '</div>';
+
+      return html;
+    }
+
+    function renderSession(sess) {
+      let html = '<div class="session">';
+      const browser = browserShort(sess.meta.ua);
+      const os = osShort(sess.meta.ua);
+      const view = sess.meta.viewport || '';
+      html += '<div class="session-head">';
+      html += '<div><div class="h-id">id ' + escapeHTML(sess.sessionId) + '</div><div class="h-when">' + escapeHTML(fmtDateTime(sess.startTs)) + '</div><div class="h-id" style="margin-top:2px">' + escapeHTML(browser) + ' &middot; ' + escapeHTML(os) + (view ? ' &middot; ' + escapeHTML(view) : '') + '</div></div>';
+      html += '<div style="text-align:right;"><div class="h-dur">' + escapeHTML(fmtMs(sess.totalMs)) + '</div><div class="h-id">' + sess.slidesSeen + '/' + TOTAL_SLIDES + ' slides</div></div>';
+      html += '</div>';
+
+      // Find longest visit for star
+      let longest = 0;
+      for (const v of sess.visits) longest = Math.max(longest, v.dwellMs || 0);
+
+      for (const v of sess.visits) {
+        const isLong = v.dwellMs >= longest && v.dwellMs > 0;
+        html += '<div class="timeline-click-wrap">';
+        html += '<div class="timeline-row' + (isLong ? ' long' : '') + '">';
+        html += '<div class="t">' + escapeHTML(fmtClock(v.enterTs)) + '</div>';
+        html += '<div class="n">#' + v.slide + '</div>';
+        html += '<div class="ttl">' + escapeHTML(SLIDE_TITLES[v.slide] || ('Slide ' + v.slide)) + (isLong ? '<span class="star">â˜… longest</span>' : '') + '</div>';
+        html += '<div class="d">' + escapeHTML(fmtMs(v.dwellMs)) + '</div>';
+        html += '</div>';
+        for (const c of v.clicks) {
+          const label = (c.detail && c.detail.label) || 'click';
+          const value = (c.detail && c.detail.value) ? ' = ' + c.detail.value : '';
+          html += '<div class="click-row">â”” ' + escapeHTML(label) + escapeHTML(value) + '</div>';
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    // ---- CSV export ----
+    function csvEscape(v) {
+      if (v == null) return '';
+      const s = String(v);
+      if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    }
+    function exportCSV() {
+      const headers = ['ts_iso', 'recipient', 'sessionId', 'action', 'slide', 'label', 'value', 'prevSlide', 'prevDwellMs', 'totalMs', 'videoKey', 'watchedSec', 'durationSec', 'maxPct', 'viewport', 'ua'];
+      const rows = [headers.join(',')];
+      const events = allEvents.slice().sort(function (a, b) { return a.ts - b.ts; });
+      for (const ev of events) {
+        const d = ev.detail || {};
+        rows.push([
+          new Date(ev.ts).toISOString(),
+          ev.recipient || '',
+          ev.sessionId || '',
+          ev.action || '',
+          ev.slide == null ? '' : ev.slide,
+          d.label || '',
+          d.value || '',
+          d.prevSlide == null ? '' : d.prevSlide,
+          d.prevDwellMs == null ? '' : d.prevDwellMs,
+          d.totalMs == null ? '' : d.totalMs,
+          d.videoKey || '',
+          d.watchedSec == null ? '' : d.watchedSec,
+          d.durationSec == null ? '' : d.durationSec,
+          d.maxPct == null ? '' : d.maxPct,
+          d.viewport || '',
+          d.ua || ''
+        ].map(csvEscape).join(','));
+      }
+      const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = window.URL.createObjectURL(blob);
+      const stamp = new Date().toISOString().replace(/[:T]/g, '-').slice(0, 19);
+      a.download = 'skyx-deck-analytics-' + stamp + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { document.body.removeChild(a); window.URL.revokeObjectURL(a.href); }, 0);
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', load);
+    document.getElementById('csvBtn').addEventListener('click', exportCSV);
+
+    load();
+    setInterval(load, REFRESH_MS);
+  })();
+  </script>
+</body>
+</html>
